@@ -619,8 +619,15 @@ def update_media():
     if m_status in ("Playing", "Paused"):
         info = run_cmd(["playerctl", "metadata", "--format", "{{title}}:::{{artist}}"])
         parts = info.split(":::", 1)
-        title = parts[0] if len(parts) > 0 and parts[0] else "Unknown Track"
-        artist = parts[1] if len(parts) > 1 and parts[1] else ""
+        title = parts[0].strip() if len(parts) > 0 and parts[0] else "Unknown Track"
+        artist = parts[1].strip() if len(parts) > 1 and parts[1] else ""
+        # Clean browser notification counters like "(10) " and trailing " - YouTube"
+        title = re.sub(r'^\(\d+\)\s*', '', title)
+        if not artist and title.endswith(" - YouTube"):
+            title = title[:-10].strip()
+            artist = "YouTube"
+        elif title.endswith(" - YouTube"):
+            title = title[:-10].strip()
         with lock:
             state["media_playing"] = (m_status == "Playing")
             state["media_status"] = m_status

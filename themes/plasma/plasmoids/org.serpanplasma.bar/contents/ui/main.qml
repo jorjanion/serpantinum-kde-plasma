@@ -463,6 +463,7 @@ PlasmoidItem {
                         }
 
                         Text {
+                            id: mediaTitleText
                             text: barContainer.mediaTitle
                             font.family: "JetBrainsMono Nerd Font"
                             font.pixelSize: 11
@@ -471,6 +472,10 @@ PlasmoidItem {
                             elide: Text.ElideRight
                             maximumLineCount: 1
                             anchors.verticalCenter: parent.verticalCenter
+                            width: {
+                                var limit = (datePill.x > 0) ? (datePill.x - (leftGroup.x + mediaPill.x) - 100) : 220;
+                                return Math.min(implicitWidth, Math.min(220, Math.max(60, limit)));
+                            }
                         }
 
                         // Compact controls
@@ -514,6 +519,17 @@ PlasmoidItem {
                                 }
                             }
                         }
+                    }
+
+                    ToolTip.visible: mediaMouse.containsMouse && barContainer.mediaTitle !== "" && barContainer.mediaTitle !== "No hay nada reprc"
+                    ToolTip.delay: 500
+                    ToolTip.text: barContainer.mediaArtist ? (barContainer.mediaTitle + "\n" + barContainer.mediaArtist) : barContainer.mediaTitle
+
+                    MouseArea {
+                        id: mediaMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        z: -1
                     }
                 }
             }
