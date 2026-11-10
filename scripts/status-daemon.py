@@ -9,6 +9,7 @@ import datetime
 import http.server
 import json
 import os
+import random
 import re
 import shutil
 import subprocess
@@ -1613,14 +1614,30 @@ class HTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 save_setting("wallpaper_slideshow", False)
 
             elif action == "next_wallpaper":
-                eval_plasma_script('''
-                    var ds = desktops();
-                    for (var i = 0; i < ds.length; i++) {
-                        ds[i].currentConfigGroup = ["Wallpaper", "org.kde.slideshow", "General"];
-                        var paths = ds[i].readConfig("SlidePaths");
-                        ds[i].writeConfig("SlidePaths", paths);
-                    }
-                ''')
+                # 1. Native shortcut for Plasma Slideshow (advances to next slide immediately)
+                subprocess.run(
+                    ["qdbus6", "org.kde.kglobalaccel", "/component/plasmashell", "org.kde.kglobalaccel.Component.invokeShortcut", "Slideshow Wallpaper Next Image"],
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=1.5
+                )
+                # 2. Support static mode (org.kde.image) or fallback: pick next random image and reload config
+                wp_dir = os.path.join(HOME, "Imágenes", "Wallpapers")
+                if os.path.exists(wp_dir):
+                    try:
+                        imgs = [f for f in os.listdir(wp_dir) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
+                        if imgs:
+                            new_img = "file://" + os.path.join(wp_dir, random.choice(imgs))
+                            eval_plasma_script(f'''
+                                var ds = desktops();
+                                for (var i = 0; i < ds.length; i++) {{
+                                    if (ds[i].wallpaperPlugin === "org.kde.image") {{
+                                        ds[i].currentConfigGroup = ["Wallpaper", "org.kde.image", "General"];
+                                        ds[i].writeConfig("Image", "{new_img}");
+                                        ds[i].reloadConfig();
+                                    }}
+                                }}
+                            ''')
+                    except Exception:
+                        pass
 
             elif action == "open_wallpapers":
                 wp_dir = os.path.join(home, "Imágenes", "Wallpapers")
