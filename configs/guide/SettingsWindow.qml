@@ -1569,7 +1569,7 @@ ApplicationWindow {
                                 Text { text: "✔  Enfoque: Clic para enfocar y traer al frente automáticamente (ClickRaise=true)"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; color: "#cbd5e1" }
                                 Text { text: "✔  Botones Clásicos: Minimizar (_), Maximizar (□) y Cerrar (X)"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; color: "#cbd5e1" }
                                 Text { text: "✔  Bordes y Esquinas: Redondeadas con radio de 12px y sombra sutil del 35%"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; color: "#cbd5e1" }
-                                Text { text: "✔  Compositor: 144Hz a baja latencia con efectos de Desenfoque (Blur) y Escala"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; color: "#cbd5e1" }
+                                Text { text: "✔  Compositor: Tasa de refresco nativa a baja latencia con efectos de Desenfoque (Blur) y Escala"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; color: "#cbd5e1" }
                             }
                         }
 

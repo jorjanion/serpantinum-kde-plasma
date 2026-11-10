@@ -747,9 +747,6 @@ def set_display_refresh_rate(power_saver=True):
     except Exception:
         pass
 
-    target_mode = "1920x1080@60" if power_saver else "1920x1080@144"
-    subprocess.Popen(["kscreen-doctor", f"output.eDP-1.mode.{target_mode}"], env=env)
-
 def apply_power_profile(val, from_user=False):
     """Apply system power profile, refresh rate, brightness, and manage battery profile memory."""
     if val not in ("performance", "balanced", "power-saver"):
@@ -1095,16 +1092,16 @@ def update_audio_devices():
                 desc = s.get("properties", {}).get("device.description") or s.get("description", "")
                 if not desc or desc == "(null)":
                     desc = s.get("properties", {}).get("node.nick") or name
-                if "Headset" in desc or "G733" in desc or "Headphone" in desc or "headset" in name.lower():
+                if "Headset" in desc or "Headphone" in desc or "headset" in name.lower() or "headphone" in name.lower():
                     icon = "󰋋"
-                    if "G733" in desc:
-                        desc = "Logitech G733 Gaming Headset"
-                elif "Speaker" in desc or "Speaker" in name:
+                elif "Speaker" in desc or "speaker" in name.lower():
                     icon = "󰓃"
-                    desc = "Altavoces Internos (HP Victus)"
-                elif "HDMI" in name:
+                    if not desc or desc == "(null)":
+                        desc = "Altavoces Integrados"
+                elif "HDMI" in name or "hdmi" in desc.lower():
                     icon = "󰍹"
-                    desc = "Monitor LG UltraGear (HDMI)" if "LG" in desc else "Salida Digital HDMI"
+                    if not desc or desc == "(null)":
+                        desc = "Salida Digital HDMI"
                 else:
                     icon = "󰕾"
                 is_active = (name == default_sink)

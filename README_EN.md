@@ -2,14 +2,14 @@
 
 # 🐍 Serpanplasma
 
-**Exact visual and functional clone of *Serpantinum* adapted 100% for KDE Plasma 6 (Wayland) with traditional floating window management.**
+**High-fidelity visual and functional recreation of *Serpantinum* engineered natively for KDE Plasma 6 (Wayland) with traditional floating window management.**
 
 [🇪🇸 Español](README.md) | [🇬🇧 English](README_EN.md)
 
 [![KDE Plasma 6](https://img.shields.io/badge/KDE_Plasma-6.0%2B-38bdf8?style=for-the-badge&logo=kde&logoColor=white)](https://kde.org/plasma-desktop/)
 [![Wayland](https://img.shields.io/badge/Display-Wayland-0284c7?style=for-the-badge&logo=wayland&logoColor=white)](https://wayland.freedesktop.org/)
-[![CachyOS / Arch](https://img.shields.io/badge/Tested_on-CachyOS_Arch_Linux-10b981?style=for-the-badge&logo=archlinux&logoColor=white)](https://cachyos.org/)
-[![Hardware](https://img.shields.io/badge/Hardware-AMD_%2B_NVIDIA_Hybrid_144Hz-fbbf24?style=for-the-badge)](https://github.com/jorjanion/Serpanplasma)
+[![Linux](https://img.shields.io/badge/Linux-All_Distributions-22c55e?style=for-the-badge&logo=linux&logoColor=white)](#-multi-distribution-installation)
+[![Hardware](https://img.shields.io/badge/Hardware-Universal_%2F_Any_GPU-fbbf24?style=for-the-badge)](#-key-features)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-f87171?style=for-the-badge)](LICENSE)
 
 <br/>
@@ -22,40 +22,54 @@
 
 ## 📖 Overview
 
-**Serpanplasma** is a pixel-perfect recreation of the clean, minimalist visual experience of **[Serpantinum](https://github.com/ilyamiro/serpantinum)** (ilyamiro's Quickshell desktop shell), engineered natively for **KDE Plasma 6 over Wayland**.
+**Serpanplasma** is a high-precision, faithful recreation of the clean minimalist aesthetic of **[Serpantinum](https://github.com/ilyamiro/serpantinum)** (ilyamiro's Quickshell desktop shell), engineered natively for **KDE Plasma 6 on Wayland**.
 
-It delivers Serpantinum's aesthetics without tiling window managers (like Hyprland or Niri), preserving the comfort, stability, and intuitive workflow of traditional Windows floating window management.
+The project brings Serpantinum's modern visual language — translucent floating pill bars, rounded corners, and native real-time blur — into KDE Plasma. It removes the steep learning curve and friction of tiling window managers (such as Hyprland or Niri), preserving the familiarity, comfort, and productivity of standard floating window management.
 
 ---
 
-## 🎯 Key Highlights
+## 🎯 Key Features
 
-- ❌ **No Forced Tiling:** No complex keybinding gymnastics or auto-splitting windows across your screen.
-- ✅ **True Floating Windows (Windows Style):** Applications open centered with comfortable default sizing, drag-and-drop freely, overlap naturally, and include classic window buttons (**_**, **□**, **X**).
-- ✅ **Standard Windows Shortcuts:**
+- ❌ **No Forced Tiling:** Enjoy complete workspace freedom with no automatic screen partitioning or dozens of complex keyboard shortcuts to memorize.
+- 🪟 **True Floating Windows (Classic / Windows Style):**
+  - Applications launch centered with comfortable default sizing.
+  - Smooth dragging, resizing, and natural window overlapping.
+  - Classic titlebar controls: Minimize (**_**), Maximize (**□**), and Close (**X**).
+- ⌨️ **Standard Keyboard Shortcuts:**
   - `Alt + F4`: Close active window.
-  - `Alt + Tab`: Switch between running applications.
+  - `Alt + Tab`: Switch between open applications.
   - `Win + Up Arrow`: Maximize active window.
   - `Win + Down Arrow`: Restore or minimize active window.
   - `Win + E`: Launch Dolphin file manager.
-- ✅ **Floating Top Bar with Native Pills:** Translucent floating top panel with rounded corners, native KWin blur, and capsules identical to Serpantinum.
-- ✅ **Floating Application Dock:** Centered floating bottom dock with task indicators, hover zoom, and intelligent window dodging.
-- ✅ **Native Wayland Dropdown Dialogs:** Clicking top bar pills opens interactive popup cards anchored directly below:
-  - 󰖙 **Weather Card:** 4-day forecast with interactive day selector, feels like, humidity, and wind metrics.
-  - 󰃮 **Monthly Calendar:** Interactive calendar with smooth animated month transition and live digital clock.
-  - 󰁹 **Battery & Power Profiles:** Unclipped battery monitor with 1-click power profiles (`144Hz Performance`, `Balanced`, `Power Saver`).
-  - 󰤨 **Network & Traffic Details:** SSID, local IP, public IP, and real-time upload/download speeds.
-  - 󰕾 **Audio Controls:** Master volume slider, output audio device switcher (headset, speakers, HDMI), mute toggle, and quick presets.
-  - 󰌌 **Keyboard Layout Pill:** Clickable capsule to toggle between `ES` and `US` layout with 1 click.
-  - ⏻ **Power Menu:** Native popup menu for Shut Down, Reboot, Log Out, Lock Screen, and Suspend.
-  - 󰏘 **Quick Theme Switcher:** Instant, reactive color switching across top bar, pills, and popups.
-- ✅ **8 Dark & Light Color Palettes:**
+- 🛸 **Floating Top Bar with Native Pills (`org.serpanplasma.bar`):**
+  - Translucent detached top panel with smooth rounded corners and KWin blur.
+  - Discrete, standalone capsules matching Serpantinum's design language.
+- ⚓ **Centered Floating Application Dock:**
+  - Detached bottom dock with hover zoom effect and intelligent window dodging.
+  - Subtle running task indicators and drag-and-drop pinning support.
+- 🎛️ **Native Wayland Popup Dialogs:**
+  - 󰖙 **Weather Card:** 4-day weather forecast with day switcher, feels-like temperature, relative humidity, and wind speed.
+  - 󰃮 **Monthly Calendar:** Interactive monthly calendar view with smooth month navigation animations and live digital clock.
+  - 󰁹 **Battery & Power Profiles:** Real-time charging state monitor and 1-click power profiles (`High Performance`, `Balanced`, `Power Saver`) with dynamic refresh rate and display brightness scaling on AC connect/disconnect.
+  - 󰤨 **Network & Traffic:** Active interface details, Wi-Fi SSID, local IP, public IP, and real-time upload/download throughput monitors.
+  - 󰕾 **Audio Controls:** Master volume slider, dynamic audio output device switcher (headphones, internal speakers, digital HDMI/DisplayPort), quick mute, and preset levels.
+  - 󰌌 **Keyboard Layout Pill:** Clickable capsule to switch between keyboard layouts (e.g., `ES` and `US`) instantly.
+  - ⏻ **Power Menu:** System dialog with direct actions for Shut Down, Reboot, Log Out, Lock Screen, and Suspend.
+  - 󰏘 **Quick Theme Switcher:** Instant, live color switching between 8 curated dark and light themes.
+- 🎨 **8 Curated Color Palettes (Dark & Light Modes):**
   - **Dark:** `Obsidian` (Serpantinum Official), `Catppuccin Mocha`, `Cyber Emerald`, `Deep Amethyst`, `Neon Ruby`.
   - **Light:** `Porcelain White`, `Catppuccin Latte`, `Nord Snow Polar`.
-- ✅ **Wallpaper Controls:** Automatic rotation toggle (slideshow) and 1-click button to freeze current wallpaper as static.
-- ✅ **Modular & Draggable Desktop Widgets:** 4 independent floating cards (Hardware Monitor, Giant Clock, Weather Card, and MPRIS Player) that can be freely dragged anywhere across the desktop and enabled/disabled individually.
-- ✅ **Interactive 1:1 Settings & Guide Dashboard:** Standalone Qt6/QML guide with 9 specialized tabs, welcome banner, and real-time reactive toggles.
-- ✅ **Universal Compatibility:** Tailored for any Linux distribution running KDE Plasma 6 (CachyOS, Arch Linux, Fedora, openSUSE, Debian, etc.) and fully verified on hybrid graphics (AMD + NVIDIA 144Hz).
+- 🖼️ **Comprehensive Wallpaper Management:**
+  - Toggle automatic wallpaper rotation (slideshow).
+  - Freeze the current wallpaper as static with a single click.
+- 🧩 **Modular & Draggable Desktop Widgets:**
+  - 4 independent floating cards: Hardware Monitor (CPU, RAM, Swap, Disk, and Thermal Sensors), Giant Digital Clock, Live Weather, and MPRIS Media Player.
+  - Freely draggable across any part of your screen with individual toggle controls.
+- ⚙️ **Integrated Settings & Guide Dashboard (`serpanplasma-settings`):**
+  - Standalone Qt6/QML management dashboard featuring 9 specialized sections for real-time bar, dock, widget, and system customization.
+- 🖥️ **Universal Hardware Compatibility:**
+  - Fully adaptable to any screen resolution and native refresh rate (60Hz, 120Hz, 144Hz, 165Hz, 240Hz+).
+  - Compatible with any GPU architecture (Intel/AMD integrated graphics, NVIDIA/AMD dedicated GPUs, or hybrid laptop setups with automatic RTD3 power-saving idle).
 
 ---
 
@@ -67,86 +81,72 @@ It delivers Serpantinum's aesthetics without tiling window managers (like Hyprla
 └────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 1. Floating Top Bar (`org.serpanplasma.bar`)
-- **Left Section:**
-  - `[ ⚙ ]`: Rounded square button that toggles the **Serpanplasma Settings & Guide** window.
-  - `[ ━ ] ● ● ● ● ● ● ●`: Interactive 8 virtual desktops module with active lavender pill (`#d0d0d0`) and circular dots (`#1e293b`).
-  - `[ ♪ Title - Artist ⏮ ▶ ⏭ ]`: Media capsule with MPRIS controls (previous, play/pause, next).
-- **Center Section (Symmetrical Trio):**
-  - `[ 15 Oct. ]`: Short date pill opening interactive monthly calendar.
+### 1. Floating Top Bar
+- **Left Zone:**
+  - `[ ⚙ ]`: Quick launcher for the Serpanplasma Settings & Guide dashboard.
+  - `[ ━ ] ● ● ● ● ● ● ●`: Interactive KWin 8-workspace switcher.
+  - `[ ♫ Title - Artist ⏮ ▶ ⏭ ]`: Media capsule displaying MPRIS metadata with playback controls.
+- **Center Zone (Mathematically Symmetrical Trio):**
+  - `[ 15 Oct. ]`: Date pill opening the interactive monthly calendar.
   - `[ 17:32:27 ]`: **Mathematically centered digital clock** in JetBrains Mono Black.
-  - `[ 󰖙 22.1°C ]`: Weather pill opening 4-day forecast dialog.
-- **Right Section:**
+  - `[ 󰖙 22.1°C ]`: Weather capsule opening the 4-day forecast dialog.
+- **Right Zone:**
   - `[ 󰏘 ]`: Quick theme switcher dialog.
-  - `[ 󰕾 ]`: Interactive volume pill with slider popup.
-  - `[ US / ES ]`: Keyboard layout indicator.
-  - `[ 󰤨 Net ]`: Solid white capsule opening network dialog.
-  - `[ 󰁹 100% ]`: Solid white capsule opening battery & power profiles dialog.
-  - `[ ⏻ ]`: Power button triggering Plasma logout/shutdown.
+  - `[ 󰕾 ]`: Volume control pill with slider and output audio device selector.
+  - `[ EN / ES ]`: Keyboard layout indicator and switcher.
+  - `[ 󰤨 Net ]`: Network status pill with upload and download throughput.
+  - `[ 󰁹 100% ]`: Battery capsule with power profile selector.
+  - `[ ⏻ ]`: Power and session management dialog.
 
 ### 2. Centered Floating Application Dock
-- Floating panel detached from the bottom screen edge.
-- Pinned launchers for Terminal (`kitty`/`konsole`), File Manager (`dolphin`), Web Browser, `Discord`, `Spotify`, and System Settings.
-- Smart running indicators and drag-and-drop pinning support.
-
-### 3. Settings & Guide Dashboard (`serpanplasma-settings`)
-- Exact recreation of Serpantinum's `GuidePopup.qml` & `WelcomeTab.qml`:
-  - **Welcome Tab:** Hero banner, version badge `v1.0.0`, feature cards, and quick navigation shortcuts.
-  - **Top Bar Tab:** Height sliders, opacity sliders, distinct pills vs edge-to-edge toggle, module visibility.
-  - **Dock Tab:** Comprehensive settings (position, size, autohide, dodge windows, hover scale, indicators).
-  - **Theme Tab:** 8 color schemes (5 dark, 3 light) with color swatches and 1-click activation.
-  - **Windows Tab:** KWin floating rules, click-to-raise, rounded corners, and shortcut overview.
-  - **Wallpapers Tab:** Slideshow toggle, static freeze button, intervals, and Dolphin shortcut.
-  - **Desktop Widgets Tab:** Toggle and reload controls for hardware monitor, big clock, and live weather.
-  - **System & Shortcuts Tab:** Standard Windows shortcuts and daemon restart.
-  - **About Tab:** Credits, architecture, and project links.
+- Floating bottom bar detached from the lower screen edge.
+- Preconfigured launchers for Terminal (`konsole`/`kitty`/`alacritty`), File Manager (`dolphin`), Web Browser, Discord, Spotify, and System Settings.
+- Running application indicators and drag-and-drop pinning support.
 
 ---
 
-## 🛠️ Architecture
+## 📦 System Requirements
 
-```
-Serpanplasma/
-├── assets/                          # Visual resources and desktop previews
-├── configs/
-│   ├── applications/                # Desktop entry for Serpanplasma Settings
-│   ├── autostart/                   # Autostart entry for the status daemon
-│   ├── bin/                         # CLI launcher (serpanplasma-settings)
-│   ├── guide/                       # Standalone Settings & Guide QML application
-│   ├── systemd/                     # Systemd user service for background daemon
-│   └── terminal/                    # Profiles for Konsole, Kitty, and Alacritty
-├── fonts/                           # JetBrains Mono Nerd Font typography
-├── scripts/
-│   ├── setup-panel.js               # Plasma scripting layout for bar and dock
-│   ├── setup-wallpapers.js          # Wallpaper slideshow configuration
-│   └── status-daemon.py             # Ultra-lightweight local HTTP status daemon (<1ms)
-├── themes/
-│   ├── color-schemes/               # Obsidian color scheme for KDE Plasma
-│   ├── plasma/
-│   │   ├── desktoptheme/            # Serpanplasma desktop theme (Blur, SVGs)
-│   │   └── plasmoids/
-│   │       └── org.serpanplasma.bar # Native QML top bar plasmoid
-│   └── window-decorations/          # Breeze configuration with rounded corners
-├── install.sh                       # Automated installer with backups
-├── restore.sh                       # Restoration script to revert changes
-├── README.md                        # Documentation in Spanish
-└── README_EN.md                     # Documentation in English
-```
+- **Desktop Environment:** **KDE Plasma 6.0 or higher** running under a **Wayland** session.
+- **Audio Server:** PipeWire / WirePlumber or PulseAudio.
+- **Required Core Utilities:** `git`, `python3`, `curl`, `jq`, `playerctl`, `brightnessctl`.
 
 ---
 
-## 🚀 Installation
+## 🚀 Multi-Distribution Installation
 
-### Prerequisites:
-- OS: CachyOS, Arch Linux, or any distribution running **KDE Plasma 6 (Wayland)**.
-- Packages: `git`, `python3`, `curl`, `jq`, `playerctl`.
+Before running the Serpanplasma setup script, install the required system packages using your distribution's package manager:
 
-On Arch Linux / CachyOS:
+### 1. Arch Linux / CachyOS / EndeavourOS / Manjaro
 ```bash
-sudo pacman -S --needed git python jq playerctl
+sudo pacman -S --needed git python jq curl playerctl brightnessctl
 ```
 
-### Clone and Install:
+### 2. Fedora / Nobara / RHEL
+```bash
+sudo dnf install git python3 jq curl playerctl brightnessctl
+```
+
+### 3. openSUSE Tumbleweed / Leap
+```bash
+sudo zypper install git python3 jq curl playerctl brightnessctl
+```
+
+### 4. Debian / Ubuntu / KDE neon / Kubuntu (with Plasma 6)
+```bash
+sudo apt update
+sudo apt install git python3 jq curl playerctl brightnessctl
+```
+
+### 5. Other Distributions (Void, Alpine, Gentoo, etc.)
+Install the equivalents of: `git`, `python3`, `jq`, `curl`, `playerctl`, and `brightnessctl` via your package manager.
+
+---
+
+### 📥 Clone and Install Serpanplasma
+
+Once dependencies are installed, clone the repository and run the automated installer:
+
 ```bash
 git clone https://github.com/jorjanion/Serpanplasma.git
 cd Serpanplasma
@@ -154,29 +154,84 @@ chmod +x install.sh restore.sh
 ./install.sh
 ```
 
-The installer will:
-1. Create a full backup in `~/.config/serpanplasma-backup/`.
-2. Install and register **JetBrains Mono Nerd Font**.
-3. Apply the **Serpanplasma Obsidian** color palette.
-4. Deploy the native **Serpanplasma Bar** plasmoid and floating application dock.
-5. Install and enable the background status daemon via `systemd --user`.
-6. Deploy the **Settings & Guide** application and link the `[ ⚙ ]` top bar button.
-7. Configure KWin for centered floating placement, click-to-raise, and Windows shortcuts.
+### What does the installer do automatically?
+1. **Full Backup:** Backs up your existing KDE configuration files to `~/.config/serpanplasma-backup/`.
+2. **Typography:** Installs and registers **JetBrains Mono Nerd Font** with fontconfig.
+3. **Color Schemes:** Deploys all 8 palettes and applies the default **Obsidian** scheme.
+4. **Native Plasmoid:** Installs `org.serpanplasma.bar` to your user plasmoids directory.
+5. **Window Management:** Configures KWin for centered floating placement, background blur, and standard Windows shortcuts.
+6. **Hardware Optimization:** Dynamically detects your display's native refresh rate and configures laptop power profiles and hybrid GPU idle management.
+7. **Status Daemon:** Installs and enables the background microdaemon as a `systemd --user` service.
+8. **Settings Dashboard:** Registers the `serpanplasma-settings` launcher and connects it to the top bar `[ ⚙ ]` button.
+
+---
+
+## 🛠️ Technical Architecture
+
+Serpanplasma is cleanly structured into modular components:
+
+```
+Serpanplasma/
+├── assets/                          # Graphic assets, screenshots, and launcher icons
+├── configs/
+│   ├── applications/                # Desktop entry for Serpanplasma Settings
+│   ├── autostart/                   # Autostart entry for the status daemon
+│   ├── bin/                         # CLI launcher (serpanplasma-settings)
+│   ├── fastfetch/                   # Fastfetch system summary configuration
+│   ├── guide/                       # Standalone Settings & Guide QML application
+│   ├── kwin/                        # Floating window rules for KWin
+│   ├── systemd/                     # Systemd user service for background daemon
+│   ├── terminal/                    # Terminal profiles for Konsole, Kitty, and Alacritty
+│   └── widgets/                     # Modular draggable desktop widgets
+├── fonts/                           # JetBrains Mono Nerd Font typography
+├── scripts/
+│   ├── setup-panel.js               # Plasma scripting layout for bar and dock
+│   ├── setup-wallpapers.js          # Wallpaper slideshow configuration script
+│   └── status-daemon.py             # Ultra-lightweight local HTTP status daemon (<1ms)
+├── themes/
+│   ├── color-schemes/               # 8 color schemes for KDE Plasma
+│   ├── plasma/
+│   │   ├── desktoptheme/            # Serpanplasma desktop theme (Blur, SVGs)
+│   │   └── plasmoids/
+│   │       └── org.serpanplasma.bar # Native QML top bar plasmoid
+│   └── window-decorations/          # Breeze configuration with rounded corners
+├── install.sh                       # Automated installer script with backups
+├── restore.sh                       # Restoration script to revert changes
+├── README.md                        # Documentation in Spanish
+└── README_EN.md                     # Documentation in English
+```
+
+### Background Status Microdaemon (`status-daemon.py`)
+To ensure maximum UI smoothness and responsiveness without blocking PlasmaShell's main thread, a lightweight background microdaemon (written in pure Python with zero external pip dependencies) periodically collects system metrics:
+- MPRIS media player monitoring via `playerctl`.
+- Battery and AC power supply state via `/sys/class/power_supply`.
+- Network interfaces and traffic throughput via `/proc/net/dev`.
+- Volume levels and audio output sinks via PipeWire / WirePlumber (`wpctl` / `pactl`).
+- Active virtual desktops queried over the KWin DBus bus (`qdbus6 org.kde.KWin`).
+- Geolocated weather forecast fetched in the background via Open-Meteo.
+- Local HTTP endpoint at `127.0.0.1:19842` queried instantly by the QML components.
 
 ---
 
 ## 🔄 Restoration / Uninstallation
 
-To revert your desktop to its exact previous state:
+To revert your desktop to its exact previous state prior to installing Serpanplasma:
+
 ```bash
 cd Serpanplasma
 ./restore.sh
 ```
-This stops the daemon, removes the custom plasmoid and settings files, and restores your previous KDE configuration files from the backup.
+
+The restoration script:
+1. Stops and disables the background daemon service (`serpanplasma-daemon.service`).
+2. Removes the `org.serpanplasma.bar` plasmoid and user launchers.
+3. Restores your exact previous KDE configuration files from the backup.
+4. Restarts PlasmaShell to restore your original desktop session.
 
 ---
 
 ## 📄 License
 
-Distributed under the **GPL-3.0-or-later** license. See [LICENSE](LICENSE) for details.
-Inspired by the visual design of [Serpantinum](https://github.com/ilyamiro/serpantinum) by ilyamiro.
+This project is licensed under the **GNU General Public License v3.0 or later** ([GPL-3.0-or-later](LICENSE)).
+
+Inspired by the visual design of **[Serpantinum](https://github.com/ilyamiro/serpantinum)** created by [ilyamiro](https://github.com/ilyamiro).

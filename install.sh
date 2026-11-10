@@ -108,7 +108,7 @@ fi
 echo -e "${CYAN}==>${RESET} Configurando decoraciones de ventana (Esquinas redondeadas, sombras sutiles, _, □, X)..."
 cp "$SCRIPT_DIR/themes/window-decorations/breezerc" "$HOME/.config/breezerc"
 
-# 8. KWin Settings (Floating, Centered, Click-to-raise, 144Hz & Blur)
+# 8. KWin Settings (Floating, Centered, Click-to-raise & Blur)
 echo -e "${CYAN}==>${RESET} Configurando gestor de ventanas KWin..."
 kwriteconfig6 --file kwinrc --group Windows --key Placement "Centered"
 kwriteconfig6 --file kwinrc --group Windows --key ClickRaise "true"
@@ -125,7 +125,6 @@ kwriteconfig6 --file kwinrc --group Plugins --key glideEnabled "true"
 kwriteconfig6 --file kwinrc --group Plugins --key scaleEnabled "true"
 kwriteconfig6 --file kwinrc --group Plugins --key slidingpopupsEnabled "true"
 kwriteconfig6 --file kwinrc --group Plugins --key translucencyEnabled "true"
-kwriteconfig6 --file kwinrc --group Compositing --key MaxFPS "144"
 kwriteconfig6 --file kwinrc --group Compositing --key LatencyPolicy "Low"
 kwriteconfig6 --file kwinrc --group Compositing --key GLCore "true"
 kwriteconfig6 --file kwinrc --group Compositing --key WindowsBlockCompositing "false"

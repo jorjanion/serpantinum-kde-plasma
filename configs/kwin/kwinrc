@@ -29,5 +29,4 @@ translucencyEnabled=true
 [Compositing]
 GLCore=true
 LatencyPolicy=Low
-MaxFPS=144
 WindowsBlockCompositing=false

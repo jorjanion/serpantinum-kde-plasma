@@ -230,7 +230,7 @@ QtObject {
                     spacing: 3
                     RowLayout {
                         Layout.fillWidth: true
-                        Text { text: "󰻠 CPU (AMD Ryzen)"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 9; color: root.themeMuted }
+                        Text { text: "󰻠 CPU"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 9; color: root.themeMuted }
                         Item { Layout.fillWidth: true }
                         Text { text: root.cpuPct + "%"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: root.themeAccent }
                     }

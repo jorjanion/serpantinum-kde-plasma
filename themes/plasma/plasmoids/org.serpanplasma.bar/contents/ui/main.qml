@@ -1451,7 +1451,7 @@ PlasmoidItem {
                                 anchors.leftMargin: 12
                                 anchors.rightMargin: 12
                                 Text { text: "󰓅"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 14; color: (barContainer.powerProfile === "performance") ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
-                                Text { text: "Rendimiento (144Hz Performance)"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: (barContainer.powerProfile === "performance") ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
+                                Text { text: "Alto Rendimiento (Performance)"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: (barContainer.powerProfile === "performance") ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
                             }
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor

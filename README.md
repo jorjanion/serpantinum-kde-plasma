@@ -2,14 +2,14 @@
 
 # 🐍 Serpanplasma
 
-**Clon estético y funcional exacto de *Serpantinum* adaptado al 100% para KDE Plasma 6 (Wayland) con gestión de ventanas tradicional flotante.**
+**Recreación estética y funcional de alta fidelidad de *Serpantinum* adaptada de forma nativa para KDE Plasma 6 (Wayland) con gestión de ventanas tradicional flotante.**
 
 [🇪🇸 Español](README.md) | [🇬🇧 English](README_EN.md)
 
 [![KDE Plasma 6](https://img.shields.io/badge/KDE_Plasma-6.0%2B-38bdf8?style=for-the-badge&logo=kde&logoColor=white)](https://kde.org/plasma-desktop/)
 [![Wayland](https://img.shields.io/badge/Display-Wayland-0284c7?style=for-the-badge&logo=wayland&logoColor=white)](https://wayland.freedesktop.org/)
-[![CachyOS / Arch](https://img.shields.io/badge/Tested_on-CachyOS_Arch_Linux-10b981?style=for-the-badge&logo=archlinux&logoColor=white)](https://cachyos.org/)
-[![Hardware](https://img.shields.io/badge/Hardware-AMD_%2B_NVIDIA_Hybrid_144Hz-fbbf24?style=for-the-badge)](https://github.com/jorjanion/Serpanplasma)
+[![Linux](https://img.shields.io/badge/Linux-Todas_las_Distros-22c55e?style=for-the-badge&logo=linux&logoColor=white)](#-instalación-por-distribución)
+[![Hardware](https://img.shields.io/badge/Hardware-Universal_%2F_Cualquier_GPU-fbbf24?style=for-the-badge)](#-características-principales)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-f87171?style=for-the-badge)](LICENSE)
 
 <br/>
@@ -22,74 +22,147 @@
 
 ## 📖 Visión General
 
-**Serpanplasma** es una recreación fiel y exacta de la experiencia visual y funcional de **[Serpantinum](https://github.com/ilyamiro/serpantinum)** (el entorno minimalista de ilyamiro basado en Quickshell) construida nativamente para **KDE Plasma 6 sobre Wayland**, sin necesidad de gestores en mosaico (*tiling managers* como Hyprland o Niri) y manteniendo la comodidad inigualable de la gestión de ventanas flotantes estilo Windows.
+**Serpanplasma** es una recreación fiel y precisa de la estética minimalista de **[Serpantinum](https://github.com/ilyamiro/serpantinum)** (el entorno de escritorio creado por ilyamiro basado en Quickshell), implementada nativamente para **KDE Plasma 6 sobre Wayland**.
+
+El proyecto traslada el diseño visual moderno de Serpantinum —con su icónica barra de píldoras translúcidas, esquinas redondeadas y desenfoque (*blur*) en tiempo real— a KDE Plasma, eliminando la curva de aprendizaje de los gestores de ventanas en mosaico (*tiling managers* como Hyprland o Niri) y conservando la comodidad, productividad y estabilidad de la gestión de ventanas flotantes clásica.
 
 ---
 
-## 🎯 ¿Por qué Serpanplasma?
+## 🎯 Características Principales
 
-- ❌ **Sin Tiling forzado:** Olvídate de ventanas que se dividen solas en la pantalla o de tener que memorizar decenas de combinaciones de teclas sólo para abrir un navegador.
-- ✅ **Ventanas Flotantes Libres (Estilo Windows):** Todas las aplicaciones se abren en modo flotante, centradas, con un tamaño inicial cómodo, superponibles libremente, arrastrables con el ratón y con sus botones clásicos (**_**, **□**, **X**).
-- ✅ **Atajos Estándar:**
+- ❌ **Sin Tiling Forzado:** Trabaja con total libertad sin particiones automáticas de pantalla ni la necesidad de memorizar complejas combinaciones de teclas.
+- 🪟 **Ventanas Flotantes Libres (Estilo Clásico / Windows):**
+  - Apertura de aplicaciones centrada con dimensiones proporcionadas.
+  - Arrastre, redimensionado y superposición natural mediante ratón o atajos.
+  - Botones clásicos integrados en la barra de título: Minimizar (**_**), Maximizar (**□**) y Cerrar (**X**).
+- ⌨️ **Atajos de Teclado Estándar:**
   - `Alt + F4`: Cerrar la ventana activa.
-  - `Alt + Tab`: Alternar entre ventanas abiertas.
-  - `Win + Flecha Arriba`: Maximizar ventana activa.
-  - `Win + Flecha Abajo`: Restaurar o minimizar ventana activa.
-  - `Win + E`: Abrir el explorador de archivos Dolphin.
-- ✅ **Barra Superior Flotante con Píldoras Exactas:** Barra flotante translúcida con esquinas redondeadas, blur nativo de KWin y cápsulas idénticas a Serpantinum.
-- ✅ **Dock de Aplicaciones Flotante Inferior:** Dock centrado con los iconos de tareas de tus aplicaciones favoritas y zoom al pasar el ratón.
-- ✅ **Menús Desplegables Nativos (Wayland Dialogs):** Haz clic en las píldoras de la barra para abrir paneles emergentes detallados:
-  - 󰖙 **Clima:** Pronóstico meteorológico a 4 días con selector de día interactivo, sensación térmica, humedad y viento.
-  - 󰃮 **Calendario:** Vista interactiva de mes completo con navegación de mes animada suavemente y fecha en vivo.
-  - 󰁹 **Batería & Rendimiento:** Vista sin recortes con perfiles de energía (`Rendimiento 144Hz`, `Equilibrado`, `Ahorro de Batería`).
-  - 󰤨 **Red & Tráfico:** SSID actual, IP Local, IP Pública y velocidad en tiempo real de bajada y subida.
-  - 󰕾 **Control de Audio:** Deslizador de volumen maestro, selector de dispositivos de salida de sonido (auriculares, altavoces, HDMI) y presets rápidos.
-  - 󰌌 **Distribución de Teclado:** Píldora interactiva para alternar entre `ES` y `US` con 1 solo clic.
-  - ⏻ **Menú de Energía:** Menú emergente completo para Apagar, Reiniciar, Cerrar Sesión, Bloquear Pantalla y Suspender.
-  - 󰏘 **Selector Rápido de Tema:** Conmutación instantánea y reactiva entre 8 temas oscuros y claros.
-- ✅ **8 Esquemas de Color (Oscuros y Claros):**
+  - `Alt + Tab`: Conmutar entre aplicaciones en ejecución.
+  - `Win + Flecha Arriba`: Maximizar la ventana activa.
+  - `Win + Flecha Abajo`: Restaurar o minimizar la ventana activa.
+  - `Win + E`: Abrir el gestor de archivos Dolphin.
+- 🛸 **Barra Superior Flotante con Píldoras Nativas (`org.serpanplasma.bar`):**
+  - Panel superior desacoplado de los bordes con esquinas redondeadas y desenfoque nativo KWin.
+  - Píldoras individuales idénticas al concepto visual de Serpantinum.
+- ⚓ **Dock de Aplicaciones Inferior Flotante:**
+  - Panel centrado en la parte inferior de la pantalla con efecto de escala al pasar el cursor (*zoom hover*).
+  - Indicadores discretos de estado de ejecución y soporte para anclar lanzadores mediante arrastrar y soltar.
+- 🎛️ **Menús Desplegables Nativos (Wayland Dialogs):**
+  - 󰖙 **Pronóstico Meteorológico:** Tarjeta emergente con pronóstico a 4 días, selector interactivo de jornada, sensación térmica, humedad relativa y velocidad de viento.
+  - 󰃮 **Calendario Mensual:** Vista de mes completo con navegación suave de meses y reloj digital en vivo.
+  - 󰁹 **Batería y Perfiles de Energía:** Monitor en tiempo real del estado de carga y conmutación entre perfiles (`Alto Rendimiento`, `Equilibrado`, `Ahorro de Batería`), con ajuste automático y dinámico de tasa de refresco y brillo según alimentación por CA o batería.
+  - 󰤨 **Red y Tráfico:** Detección de interfaz activa, SSID Wi-Fi, IP Local, IP Pública y gráficas de velocidad de subida/bajada en tiempo real.
+  - 󰕾 **Control de Audio:** Deslizador de volumen maestro, selector dinámico de salidas de sonido (auriculares, altavoces integrados, pantallas digitales HDMI/DisplayPort), silenciamiento rápido y niveles predefinidos.
+  - 󰌌 **Distribución de Teclado:** Píldora interactiva para alternar instantáneamente entre disposiciones de teclado (por ejemplo, `ES` y `US`).
+  - ⏻ **Menú de Sistema:** Diálogo emergente con acciones directas para Apagar, Reiniciar, Cerrar Sesión, Bloquear Pantalla y Suspender.
+  - 󰏘 **Selector Rápido de Tema:** Conmutación en tiempo real entre 8 paletas de color.
+- 🎨 **8 Esquemas de Color (Modos Oscuros y Claros):**
   - **Oscuros:** `Obsidian` (Oficial Serpantinum), `Catppuccin Mocha`, `Cyber Emerald`, `Deep Amethyst`, `Neon Ruby`.
   - **Claros:** `Porcelain White`, `Catppuccin Latte`, `Nord Snow Polar`.
-- ✅ **Control Total de Fondos:** Activa o desactiva la rotación de fondos (slideshow) y congela cualquier fondo como estático con 1 clic.
-- ✅ **Widgets de Escritorio Modulares y Arrastrables:** 4 tarjetas flotantes independientes (Monitor de Hardware, Reloj Gigante, Clima y MPRIS) que puedes mover libremente con el ratón por la pantalla y activar o desactivar por separado.
-- ✅ **Compatibilidad Universal:** Diseñado para funcionar en cualquier distribución Linux con KDE Plasma 6 (CachyOS, Arch Linux, Fedora, openSUSE, etc.) y en hardware híbrido (AMD + NVIDIA a 144Hz).
+- 🖼️ **Control Integral de Fondos de Pantalla:**
+  - Alternador de rotación automática (presentación / *slideshow*).
+  - Botón de congelado para fijar el fondo actual como estático con un solo clic.
+- 🧩 **Widgets de Escritorio Modulares y Arrastrables:**
+  - 4 tarjetas flotantes independientes: Monitor de Hardware (CPU, RAM, Swap, Disco y Sensores térmicos), Reloj Digital Gigante, Clima y Reproductor Multimedia MPRIS.
+  - Totalmente reposicionables en cualquier zona de la pantalla con activación independiente.
+- ⚙️ **Panel de Configuración y Guía Integrado (`serpanplasma-settings`):**
+  - Interfaz dedicada Qt6/QML con 9 secciones temáticas para personalizar barras, docks, temas, atajos y widgets en tiempo real.
+- 🖥️ **Compatibilidad Universal de Hardware:**
+  - Adaptabilidad total a cualquier resolución y tasa de refresco (60Hz, 120Hz, 144Hz, 165Hz, 240Hz+).
+  - Compatible con cualquier GPU (gráficos integrados Intel/AMD, tarjetas dedicadas NVIDIA/AMD o configuraciones híbridas de portátiles con gestión automática de reposo RTD3).
 
 ---
 
-## 💎 Anatomía del Diseño (Copia Fiel de Serpantinum)
+## 💎 Anatomía del Diseño (Réplica 1:1 de Serpantinum)
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ [⚙] [ ━ ] ● ● ● ● ● ● ● [ ♫ Title ⏮ ▶ ⏭ ]   [15 oct.] [ 17:32:27 ] [󰖙 22°C]   [󰏘] [󰕾] [EN] [󰤨 Red] [󰁹 100%] [⏻] │
+│ [⚙] [ ━ ] ● ● ● ● ● ● ● [ ♫ Title ⏮ ▶ ⏭ ]   [15 oct.] [ 17:32:27 ] [󰖙 22°C]   [󰏘] [󰕾] [ES] [󰤨 Red] [󰁹 100%] [⏻] │
 └────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 1. Barra Superior Flotante (`org.serpanplasma.bar`)
-- **Extremo Izquierdo:**
-  - `[ ⚙ ]`: Botón para abrir el panel de configuración y guía Serpanplasma.
+### 1. Barra Superior Flotante
+- **Zona Izquierda:**
+  - `[ ⚙ ]`: Acceso directo al panel de Configuración y Guía de Serpanplasma.
   - `[ ━ ] ● ● ● ● ● ● ●`: Píldora interactiva de 8 escritorios virtuales de KWin.
-  - `[ ♪ Titulo - Artista ⏮ ▶ ⏭ ]`: Cápsula multimedia interactiva MPRIS.
-- **Centro (Trío Simétrico Centrado):**
-  - `[ 15 de oct. ]`: Píldora de fecha que despliega el calendario mensual interactivo.
-  - `[ 17:32:27 ]`: **Reloj digital matemáticamente centrado** en la pantalla con tipografía JetBrains Mono Black.
-  - `[ 󰖙 22.1°C ]`: Píldora de clima que despliega la tarjeta de pronóstico a 4 días.
-- **Extremo Derecho:**
-  - `[ 󰏘 ]`: Selector rápido de tema para alternar entre las 8 paletas oscuras y claras.
-  - `[ 󰕾 ]`: Píldora de volumen con deslizador, preajustes y mute.
-  - `[ EN / ES ]`: Indicador de teclado.
-  - `[ 󰤨 Red ]`: Píldora blanca sólida con diálogo de red e IP local.
-  - `[ 󰁹 100% ]`: Píldora blanca sólida de batería con selector de perfiles de energía.
-  - `[ ⏻ ]`: Diálogo de apagado del sistema.
+  - `[ ♫ Título - Artista ⏮ ▶ ⏭ ]`: Cápsula multimedia con metadatos MPRIS y controles de reproducción.
+- **Zona Central (Trío Simétrico Centrado):**
+  - `[ 15 oct. ]`: Píldora de fecha con acceso al calendario interactivo.
+  - `[ 17:32:27 ]`: **Reloj digital matemáticamente centrado** con tipografía JetBrains Mono Black.
+  - `[ 󰖙 22.1°C ]`: Píldora meteorológica con pronóstico detallado.
+- **Zona Derecha:**
+  - `[ 󰏘 ]`: Selector rápido de tema para alternar entre las 8 paletas disponibles.
+  - `[ 󰕾 ]`: Control de volumen maestro con selector de salida de audio.
+  - `[ ES / US ]`: Indicador y conmutador de distribución de teclado.
+  - `[ 󰤨 Red ]`: Píldora de estado de red con métricas de tráfico.
+  - `[ 󰁹 100% ]`: Píldora de batería con selector de perfiles de rendimiento y ahorro.
+  - `[ ⏻ ]`: Menú de apagado y opciones de sesión.
 
-### 2. Dock de Aplicaciones Inferior
-- Panel flotante centrado desacoplado del borde inferior de la pantalla.
-- Iconos directos para Terminal (`kitty`/`konsole`), Explorador (`dolphin`), Navegador web, `Discord`, `Spotify` y Ajustes del Sistema.
-- Indicadores discretos de aplicaciones en ejecución y soporte para arrastrar y fijar nuevos lanzadores.
+### 2. Dock Inferior de Aplicaciones
+- Barra flotante separada del margen inferior.
+- Lanzadores preconfigurados para Terminal (`konsole`/`kitty`/`alacritty`), Gestor de Archivos (`dolphin`), Navegador Web, Mensajería, Música y Preferencias del Sistema.
+- Indicador visual de ventanas abiertas y soporte para anclar nuevos elementos.
 
-### 3. Paletas de Color y Tipografía
-- **Obsidian:** Fondo pizarra `#0f172a`, acentos `#38bdf8`, texto `#f8fafc`.
-- **Porcelain Light:** Fondo `#f8fafc`, acentos `#0284c7`, texto `#0f172a`.
-- **Tipografía:** `JetBrains Mono Nerd Font` (SemiBold / Bold / Black).
+---
+
+## 📦 Requisitos del Sistema
+
+- **Entorno de Escritorio:** **KDE Plasma 6.0 o superior** ejecutándose sobre una sesión **Wayland**.
+- **Servidor de Audio:** PipeWire / WirePlumber o PulseAudio.
+- **Herramientas base requeridas:** `git`, `python3`, `curl`, `jq`, `playerctl`, `brightnessctl`.
+
+---
+
+## 🚀 Instalación por Distribución
+
+Antes de ejecutar el script de instalación de Serpanplasma, instala los paquetes necesarios según la distribución Linux que utilices:
+
+### 1. Arch Linux / CachyOS / EndeavourOS / Manjaro
+```bash
+sudo pacman -S --needed git python jq curl playerctl brightnessctl
+```
+
+### 2. Fedora / Nobara / RHEL
+```bash
+sudo dnf install git python3 jq curl playerctl brightnessctl
+```
+
+### 3. openSUSE Tumbleweed / Leap
+```bash
+sudo zypper install git python3 jq curl playerctl brightnessctl
+```
+
+### 4. Debian / Ubuntu / KDE neon / Kubuntu (con Plasma 6)
+```bash
+sudo apt update
+sudo apt install git python3 jq curl playerctl brightnessctl
+```
+
+### 5. Otras Distribuciones (Void, Alpine, Gentoo, etc.)
+Instala los equivalentes de: `git`, `python3`, `jq`, `curl`, `playerctl` y `brightnessctl` con el gestor de paquetes propio de tu distribución.
+
+---
+
+### 📥 Clonar e Instalar Serpanplasma
+
+Una vez instaladas las dependencias, clona el repositorio y ejecuta el instalador automático:
+
+```bash
+git clone https://github.com/jorjanion/Serpanplasma.git
+cd Serpanplasma
+chmod +x install.sh restore.sh
+./install.sh
+```
+
+### ¿Qué realiza el instalador automáticamente?
+1. **Copia de seguridad completa:** Respalda tus archivos de configuración previos de KDE en `~/.config/serpanplasma-backup/`.
+2. **Tipografía:** Instala y registra en el sistema la fuente **JetBrains Mono Nerd Font**.
+3. **Esquema de colores:** Despliega las 8 paletas y activa el esquema predeterminado **Obsidian**.
+4. **Plasmoide nativo:** Instala `org.serpanplasma.bar` en el directorio de plasmoides de usuario.
+5. **Composición y ventanas:** Configura KWin en modo flotante centrado, desenfoque visual activo y los atajos de teclado estándar.
+6. **Optimización de hardware:** Detecta la tasa de refresco nativa de tu pantalla y optimiza perfiles de energía para portátiles y gráficos híbridos.
+7. **Demonio de estado:** Instala y activa el microdemonio local como servicio de usuario mediante `systemd`.
+8. **Dashboard de configuración:** Registra el ejecutable `serpanplasma-settings` y lo asocia al botón `[ ⚙ ]` de la barra.
 
 ---
 
@@ -99,83 +172,66 @@ Serpanplasma está estructurado de manera modular y limpia:
 
 ```
 Serpanplasma/
-├── assets/                          # Recursos visuales y capturas de vista previa
+├── assets/                          # Recursos gráficos, capturas e iconos del lanzador
 ├── configs/
-│   ├── autostart/                   # Entrada de autostart para el demonio
-│   ├── systemd/                     # Servicio systemd user para el demonio de estado
-│   └── terminal/                    # Perfiles para Konsole, Kitty y Alacritty
+│   ├── applications/                # Acceso de escritorio para el panel de configuración
+│   ├── autostart/                   # Entrada de inicio automático del demonio
+│   ├── bin/                         # Lanzador CLI serpanplasma-settings
+│   ├── fastfetch/                   # Configuración visual de resumen de sistema
+│   ├── guide/                       # Aplicación QML del Dashboard de Configuración y Guía
+│   ├── kwin/                        # Reglas de ventanas flotantes para KWin
+│   ├── systemd/                     # Servicio systemd de usuario para el demonio
+│   ├── terminal/                    # Perfiles para Konsole, Kitty y Alacritty
+│   └── widgets/                     # Widgets de escritorio modulares arrastrables
 ├── fonts/                           # Tipografía JetBrains Mono Nerd Font
 ├── scripts/
-│   ├── setup-panel.js               # Script de KDE para configurar barra superior y dock
-│   ├── setup-wallpapers.js          # Script para configurar rotación de fondos
-│   └── status-daemon.py             # Microdemonio HTTP ultrarrápido (<1ms)
+│   ├── setup-panel.js               # Scripting de KDE para desplegar barra y dock
+│   ├── setup-wallpapers.js          # Scripting de rotación de fondos de pantalla
+│   └── status-daemon.py             # Microdemonio HTTP ultrarrápido (<1ms de respuesta)
 ├── themes/
-│   ├── color-schemes/               # Esquema de color Obsidian para KDE
+│   ├── color-schemes/               # 8 esquemas de color para KDE Plasma
 │   ├── plasma/
 │   │   ├── desktoptheme/            # Tema de escritorio Serpanplasma (Blur, SVGs)
 │   │   └── plasmoids/
-│   │       └── org.serpanplasma.bar # Plasmoide nativo QML para la barra superior
-│   └── window-decorations/          # Configuración de Breeze con esquinas redondeadas
-├── install.sh                       # Instalador automático con copias de seguridad
-├── restore.sh                       # Script para restaurar la configuración anterior
-└── README.md
+│   │       └── org.serpanplasma.bar # Plasmoide nativo QML de la barra superior
+│   └── window-decorations/          # Configuración de bordes Breeze con esquinas redondeadas
+├── install.sh                       # Script de instalación automatizado con backup
+├── restore.sh                       # Script de restauración para revertir todos los cambios
+├── README.md                        # Documentación en español
+└── README_EN.md                     # Documentación en inglés
 ```
 
-### Microdemonio de Estado (`status-daemon.py`)
-Para garantizar un rendimiento de 144Hz sin ralentizar plasmashell, un microdemonio en segundo plano (escrito en Python puro sin dependencias externas) recopila periódicamente las métricas del sistema:
-- Consultas MPRIS para reproducción de audio (`playerctl`).
-- Detección de batería (`/sys/class/power_supply`).
-- Estado de conexión de red (`nmcli` / `/sys/class/net`).
-- Niveles de volumen (`wpctl` / `pactl`).
-- Espacios de trabajo activos de KWin (`qdbus6 org.kde.KWin`).
-- Clima geolocalizado en segundo plano vía Open-Meteo.
-- Servidor HTTP local en `127.0.0.1:19842` consultado por el componente QML de forma instantánea.
-
----
-
-## 🚀 Instalación Rápida
-
-### Requisitos Previos:
-- Sistema Operativo: CachyOS, Arch Linux o cualquier distribución con **KDE Plasma 6 (Wayland)**.
-- Herramientas básicas: `git`, `python3`, `curl`, `jq`, `playerctl`.
-
-En Arch Linux / CachyOS:
-```bash
-sudo pacman -S --needed git python jq playerctl
-```
-
-### Clonar e Instalar:
-```bash
-git clone https://github.com/jorjanion/Serpanplasma.git
-cd Serpanplasma
-chmod +x install.sh restore.sh
-./install.sh
-```
-
-El instalador:
-1. Creará una copia de seguridad automática de tu configuración actual en `~/.config/serpanplasma-backup/`.
-2. Instalará y registrará las fuentes **JetBrains Mono Nerd Font**.
-3. Aplicará el esquema de colores **Serpanplasma Obsidian**.
-4. Instalará el plasmoide nativo `org.serpanplasma.bar`.
-5. Levantará y habilitará el servicio systemd del demonio de estado (`serpanplasma-daemon.service`).
-6. Configurará KWin en modo flotante centrado a 144Hz y con los atajos estándar de Windows.
-7. Construirá la barra superior flotante y el dock inferior.
-8. Limpiará los iconos de la superficie del escritorio para un look minimalista impoluto.
+### Microdemonio de Estado en Segundo Plano (`status-daemon.py`)
+Para garantizar la máxima fluidez de la interfaz sin saturar el hilo principal de KDE Plasma, un microdemonio en segundo plano (desarrollado en Python puro sin librerías externas pesadas) recopila las métricas del sistema:
+- Monitoreo MPRIS de reproductores multimedia mediante `playerctl`.
+- Estado de batería y fuente de alimentación vía `/sys/class/power_supply`.
+- Métricas de red y velocidad de transferencia mediante `/proc/net/dev`.
+- Control de volumen maestro y salidas de audio vía PipeWire / WirePlumber (`wpctl` / `pactl`).
+- Espacios de trabajo activos consultados a través del bus DBus de KWin (`qdbus6 org.kde.KWin`).
+- Datos meteorológicos geolocalizados en segundo plano mediante la API de Open-Meteo.
+- Servidor HTTP local en `127.0.0.1:19842` consultado de forma instantánea por los componentes QML.
 
 ---
 
 ## 🔄 Restauración / Desinstalación
 
-Si alguna vez deseas volver al estado previo de tu escritorio:
+Si deseas revertir tu entorno de escritorio al estado exacto previo a la instalación de Serpanplasma:
+
 ```bash
 cd Serpanplasma
 ./restore.sh
 ```
-El script detendrá el demonio, eliminará el plasmoide y restaurará exactamente los archivos de configuración previos desde la copia de seguridad.
+
+El script de restauración:
+1. Detiene y deshabilita el demonio en segundo plano (`serpanplasma-daemon.service`).
+2. Elimina el plasmoide `org.serpanplasma.bar` y los accesos de usuario.
+3. Restaura fielmente todos los archivos de configuración originales de KDE desde la copia de seguridad.
+4. Reinicia PlasmaShell para devolver el escritorio a su estado original.
 
 ---
 
 ## 📄 Licencia
 
-Este proyecto se distribuye bajo la licencia **GPL-3.0-or-later**. Consulta el archivo [LICENSE](LICENSE) para más detalles.
-Inspirado por el diseño visual de [Serpantinum](https://github.com/ilyamiro/serpantinum) de ilyamiro.
+Este proyecto está licenciado bajo la **GNU General Public License v3.0 o posterior** ([GPL-3.0-or-later](LICENSE)).
+
+Inspirado en el diseño visual de **[Serpantinum](https://github.com/ilyamiro/serpantinum)** creado por [ilyamiro](https://github.com/ilyamiro).
