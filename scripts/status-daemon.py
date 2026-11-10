@@ -53,6 +53,7 @@ DEFAULT_SETTINGS = {
     "show_all_tasks": True,
     "active_scope": "current",
     "color_scheme": "Serpanplasma-Obsidian",
+    "language": "es",
     "wallpaper_slideshow": True,
     "wallpaper_interval": 900,
     "desktop_widgets": False,
@@ -195,16 +196,17 @@ def save_setting(key, value):
 load_settings()
 
 state = {
-    "media_title": "No hay nada reprc",
+    "media_title": "Nothing playing" if settings.get("language") == "en" else "No hay nada reproduciéndose",
     "media_artist": "",
     "media_playing": False,
     "media_status": "Stopped",
     "active_popup": "",
+    "language": settings.get("language", "es"),
     "battery": 100,
     "battery_str": "100%",
     "battery_charging": False,
     "battery_icon": "󰁹",
-    "battery_time": "Calculando...",
+    "battery_time": "Calculating..." if settings.get("language") == "en" else "Calculando...",
     "battery_rate": "",
     "battery_seconds": 0,
     "battery_watts": 0.0,
@@ -212,7 +214,7 @@ state = {
     "network_icon": "󰤨",
     "network_ssid": "Connected",
     "local_ip": "127.0.0.1",
-    "public_ip": "Obteniendo...",
+    "public_ip": "Fetching..." if settings.get("language") == "en" else "Obteniendo...",
     "net_rx_rate": "0 KB/s",
     "net_tx_rate": "0 KB/s",
     "desktop": 1,
@@ -543,37 +545,44 @@ def update_weather():
         pressure = round(cur.get("surface_pressure", 1013))
         code = cur.get("weather_code", 0)
 
+        lang = settings.get("language", "es")
         code_map = {
-            0: ("󰖙", "Despejado"),
-            1: ("󰖙", "Mayormente despejado"),
-            2: ("☁", "Parcialmente nublado"),
-            3: ("☁", "Nublado"),
-            45: ("󰖑", "Niebla"),
-            48: ("󰖑", "Niebla con escarcha"),
-            51: ("󰖖", "Llovizna ligera"),
-            53: ("󰖖", "Llovizna moderada"),
-            55: ("󰖖", "Llovizna densa"),
-            61: ("󰖖", "Lluvia ligera"),
-            63: ("󰖖", "Lluvia moderada"),
-            65: ("󰖖", "Lluvia fuerte"),
-            71: ("󰼶", "Nevada ligera"),
-            73: ("󰼶", "Nevada moderada"),
-            75: ("󰼶", "Nevada fuerte"),
-            95: ("󰖓", "Tormenta eléctrica")
+            0: ("󰖙", "Despejado", "Clear sky"),
+            1: ("󰖙", "Mayormente despejado", "Mainly clear"),
+            2: ("☁", "Parcialmente nublado", "Partly cloudy"),
+            3: ("☁", "Nublado", "Overcast"),
+            45: ("󰖑", "Niebla", "Fog"),
+            48: ("󰖑", "Niebla con escarcha", "Depositing rime fog"),
+            51: ("󰖖", "Llovizna ligera", "Light drizzle"),
+            53: ("󰖖", "Llovizna moderada", "Moderate drizzle"),
+            55: ("󰖖", "Llovizna densa", "Dense drizzle"),
+            61: ("󰖖", "Lluvia ligera", "Slight rain"),
+            63: ("󰖖", "Lluvia moderada", "Moderate rain"),
+            65: ("󰖖", "Lluvia fuerte", "Heavy rain"),
+            71: ("󰼶", "Nevada ligera", "Slight snow"),
+            73: ("󰼶", "Nevada moderada", "Moderate snow"),
+            75: ("󰼶", "Nevada fuerte", "Heavy snow"),
+            95: ("󰖓", "Tormenta eléctrica", "Thunderstorm")
         }
 
-        icon, desc = code_map.get(code, ("☁", "Variable"))
+        entry = code_map.get(code, ("☁", "Variable", "Variable"))
+        icon = entry[0]
+        desc = entry[2] if lang == "en" else entry[1]
 
         # Build 4-day forecast
         forecast = []
-        day_names = ["Hoy", "Mañana", "Sábado", "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]
+        if lang == "en":
+            day_names = ["Today", "Tomorrow", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+        else:
+            day_names = ["Hoy", "Mañana", "Sábado", "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]
         max_list = daily.get("temperature_2m_max", [])
         min_list = daily.get("temperature_2m_min", [])
         code_list = daily.get("weather_code", [])
 
         for idx in range(min(4, len(max_list))):
             d_code = code_list[idx] if idx < len(code_list) else 0
-            d_icon, _ = code_map.get(d_code, ("☁", ""))
+            d_entry = code_map.get(d_code, ("☁", "", ""))
+            d_icon = d_entry[0]
             d_name = day_names[idx] if idx < len(day_names) else f"+{idx}d"
             forecast.append({
                 "day": d_name,
@@ -595,7 +604,7 @@ def update_weather():
             raw_t = h_times[i]
             hh = raw_t.split("T")[-1] if "T" in raw_t else raw_t
             h_code = h_codes[i] if i < len(h_codes) else 0
-            h_icon, _ = code_map.get(h_code, ("☁", ""))
+            h_icon = code_map.get(h_code, ("☁", "", ""))[0]
             h_temp = f"{round(h_temps[i])}°" if i < len(h_temps) else ""
             h_pop = f"{h_pops[i]}%" if i < len(h_pops) else "0%"
             next_24h.append({
@@ -622,7 +631,7 @@ def update_weather():
                 raw_t = h_times[i]
                 hh = raw_t.split("T")[-1] if "T" in raw_t else raw_t
                 h_code = h_codes[i] if i < len(h_codes) else 0
-                h_icon, _ = code_map.get(h_code, ("☁", ""))
+                h_icon = code_map.get(h_code, ("☁", "", ""))[0]
                 h_temp = f"{round(h_temps[i])}°" if i < len(h_temps) else ""
                 h_pop = f"{h_pops[i]}%" if i < len(h_pops) else "0%"
                 day_hours.append({
@@ -678,7 +687,7 @@ def update_media():
         with lock:
             state["media_playing"] = False
             state["media_status"] = "Stopped"
-            state["media_title"] = "No hay nada reprc"
+            state["media_title"] = "Nothing playing" if settings.get("language", "es") == "en" else "No hay nada reproduciéndose"
             state["media_artist"] = ""
 
 def is_ac_online():
@@ -946,33 +955,34 @@ def update_battery():
             if cur_wh > 0:
                 secs = int((cur_wh / active_watts) * 3600)
 
-    # Human-friendly Spanish time estimation
+    # Human-friendly time estimation (bilingual)
+    lang = settings.get("language", "es")
     if b_stat == "Full" or (ac_online and cap >= 100):
-        time_str = "Carga completa (100%)"
-        rate_str = "Conectado a CA"
+        time_str = "Fully charged (100%)" if lang == "en" else "Carga completa (100%)"
+        rate_str = "Connected to AC" if lang == "en" else "Conectado a CA"
     elif is_charging:
         if secs >= 60:
             mins = int(round(secs / 60))
             hrs = mins // 60
             rmins = mins % 60
-            if hrs > 0:
-                time_str = f"~{hrs} h {rmins} min hasta 100%" if rmins > 0 else f"~{hrs} h hasta 100%"
+            if lang == "en":
+                time_str = f"~{hrs} h {rmins} min to 100%" if (hrs > 0 and rmins > 0) else (f"~{hrs} h to 100%" if hrs > 0 else f"~{rmins} min to 100%")
             else:
-                time_str = f"~{rmins} min hasta 100%"
+                time_str = f"~{hrs} h {rmins} min hasta 100%" if (hrs > 0 and rmins > 0) else (f"~{hrs} h hasta 100%" if hrs > 0 else f"~{rmins} min hasta 100%")
         else:
-            time_str = "Calculando tiempo..."
-        rate_str = f"+{active_watts:.1f} W" if active_watts > 0 else "Cargando"
+            time_str = "Calculating time..." if lang == "en" else "Calculando tiempo..."
+        rate_str = f"+{active_watts:.1f} W" if active_watts > 0 else ("Charging" if lang == "en" else "Cargando")
     else:
         if secs >= 60:
             mins = int(round(secs / 60))
             hrs = mins // 60
             rmins = mins % 60
-            if hrs > 0:
-                time_str = f"~{hrs} h {rmins} min restantes" if rmins > 0 else f"~{hrs} h restantes"
+            if lang == "en":
+                time_str = f"~{hrs} h {rmins} min remaining" if (hrs > 0 and rmins > 0) else (f"~{hrs} h remaining" if hrs > 0 else f"~{rmins} min remaining")
             else:
-                time_str = f"~{rmins} min restantes"
+                time_str = f"~{hrs} h {rmins} min restantes" if (hrs > 0 and rmins > 0) else (f"~{hrs} h restantes" if hrs > 0 else f"~{rmins} min restantes")
         else:
-            time_str = "Calculando tiempo..."
+            time_str = "Calculating time..." if lang == "en" else "Calculando tiempo..."
         rate_str = f"-{active_watts:.1f} W" if active_watts > 0 else ""
 
     icons = ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
@@ -1234,11 +1244,11 @@ def update_audio_devices():
                 elif "Speaker" in desc or "speaker" in name.lower():
                     icon = "󰓃"
                     if not desc or desc == "(null)":
-                        desc = "Altavoces Integrados"
+                        desc = "Internal Speakers" if settings.get("language", "es") == "en" else "Altavoces Integrados"
                 elif "HDMI" in name or "hdmi" in desc.lower():
                     icon = "󰍹"
                     if not desc or desc == "(null)":
-                        desc = "Salida Digital HDMI"
+                        desc = "HDMI Digital Output" if settings.get("language", "es") == "en" else "Salida Digital HDMI"
                 else:
                     icon = "󰕾"
                 is_active = (name == default_sink)
@@ -1963,6 +1973,20 @@ class HTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             elif action == "set_popup":
                 with lock:
                     state["active_popup"] = val
+
+            elif action == "set_language" and val in ("es", "en"):
+                settings["language"] = val
+                save_setting("language", val)
+                with lock:
+                    state["language"] = val
+                try:
+                    last_media_check = 0
+                    update_battery()
+                    update_media()
+                    update_weather()
+                    update_audio_devices()
+                except Exception:
+                    pass
 
             self.send_response(200)
             self.send_header("Content-Type", "application/json")

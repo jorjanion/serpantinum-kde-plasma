@@ -15,10 +15,11 @@ PlasmoidItem {
         anchors.fill: parent
 
         // State properties
+        property string uiLanguage: "es"
         property string currentTime: "22:00:00"
         property string currentDate: "jueves, 15 de octubre"
         property string currentDateShort: "jue, 15 de oct"
-        property string mediaTitle: "No hay nada reprc"
+        property string mediaTitle: "No hay nada reproduciéndose"
         property string mediaArtist: ""
         property bool mediaPlaying: false
         property int currentDesktop: 1
@@ -83,6 +84,104 @@ PlasmoidItem {
         property int todayMonth: 9
         property int todayYear: 2026
 
+        property var i18n: ({
+            "es": {
+                "weather_title": "☁ El Tiempo",
+                "feels_like": "Sensación",
+                "hourly_forecast": "Pronóstico por Horas",
+                "today": "Hoy",
+                "day_prefix": "Día ",
+                "four_day_forecast": "Pronóstico a 4 Días",
+                "hum": "% Hum",
+                "forecast_prefix": "Pronóstico: ",
+                "cal_months": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                "cal_days_header": ["L", "M", "X", "J", "V", "S", "D"],
+                "bat_title": "Batería y Rendimiento",
+                "charging_ac": "Cargando (Conectado)",
+                "discharging": "Descargando",
+                "est_time_to_100": "Tiempo estimado hasta 100%:",
+                "est_time_remaining": "Tiempo estimado restante:",
+                "calculating_est": "Calculando estimación...",
+                "power_profile_title": "Perfil de Rendimiento Energético",
+                "perf_mode": "Alto Rendimiento",
+                "balanced_mode": "Equilibrado",
+                "power_saver_mode": "Ahorro de Batería",
+                "net_title": "Conexión de Red",
+                "current_net": "Red Actual:",
+                "local_ip": "IP Local:",
+                "public_ip": "IP Pública:",
+                "detecting": "Detectando...",
+                "download": "Bajada:",
+                "upload": "Subida:",
+                "net_settings": "Configuración de Red",
+                "audio_title": "Control de Audio",
+                "muted": "Silenciado",
+                "mute": "Silenciar",
+                "master_volume": "Volumen Master",
+                "output_devices": "Dispositivos de Salida",
+                "theme_switcher": "Cambiador Rápido de Tema",
+                "dark_palettes": "Temas Oscuros",
+                "light_palettes": "Temas Claros",
+                "power_mgmt": "Gestión de Energía",
+                "shutdown": "Apagar Sistema",
+                "reboot": "Reiniciar Equipo",
+                "logout": "Cerrar Sesión",
+                "lock_screen": "Bloquear Pantalla",
+                "suspend": "Suspender"
+            },
+            "en": {
+                "weather_title": "☁ Weather",
+                "feels_like": "Feels like",
+                "hourly_forecast": "Hourly Forecast",
+                "today": "Today",
+                "day_prefix": "Day ",
+                "four_day_forecast": "4-Day Forecast",
+                "hum": "% Hum",
+                "forecast_prefix": "Forecast: ",
+                "cal_months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+                "cal_days_header": ["M", "T", "W", "T", "F", "S", "S"],
+                "bat_title": "Battery & Performance",
+                "charging_ac": "Charging (AC Connected)",
+                "discharging": "Discharging",
+                "est_time_to_100": "Estimated time to 100%:",
+                "est_time_remaining": "Estimated time remaining:",
+                "calculating_est": "Calculating estimate...",
+                "power_profile_title": "Power Performance Profile",
+                "perf_mode": "High Performance",
+                "balanced_mode": "Balanced",
+                "power_saver_mode": "Power Saver",
+                "net_title": "Network Connection",
+                "current_net": "Current Network:",
+                "local_ip": "Local IP:",
+                "public_ip": "Public IP:",
+                "detecting": "Detecting...",
+                "download": "Download:",
+                "upload": "Upload:",
+                "net_settings": "Network Settings",
+                "audio_title": "Audio Control",
+                "muted": "Muted",
+                "mute": "Mute",
+                "master_volume": "Master Volume",
+                "output_devices": "Output Devices",
+                "theme_switcher": "Quick Theme Switcher",
+                "dark_palettes": "Dark Themes",
+                "light_palettes": "Light Themes",
+                "power_mgmt": "Power Management",
+                "shutdown": "Shut Down",
+                "reboot": "Restart",
+                "logout": "Log Out",
+                "lock_screen": "Lock Screen",
+                "suspend": "Suspend"
+            }
+        })
+
+        function tr(key) {
+            var dict = i18n[uiLanguage] || i18n["es"];
+            return dict[key] !== undefined ? dict[key] : (i18n["es"][key] !== undefined ? i18n["es"][key] : key);
+        }
+
+        onUiLanguageChanged: updateDateTime()
+
         function updateDateTime() {
             var now = new Date();
             var h = String(now.getHours()).padStart(2, '0');
@@ -90,13 +189,23 @@ PlasmoidItem {
             var s = String(now.getSeconds()).padStart(2, '0');
             currentTime = h + ":" + m + ":" + s;
 
-            var days = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
-            var daysShort = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
-            var months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-            var monthsShort = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+            if (uiLanguage === "en") {
+                var daysEn = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                var daysShortEn = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+                var monthsEn = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                var monthsShortEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-            currentDate = days[now.getDay()] + ", " + now.getDate() + " de " + months[now.getMonth()];
-            currentDateShort = daysShort[now.getDay()] + ", " + now.getDate() + " de " + monthsShort[now.getMonth()];
+                currentDate = daysEn[now.getDay()] + ", " + monthsEn[now.getMonth()] + " " + now.getDate();
+                currentDateShort = daysShortEn[now.getDay()] + ", " + monthsShortEn[now.getMonth()] + " " + now.getDate();
+            } else {
+                var daysEs = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+                var daysShortEs = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
+                var monthsEs = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+                var monthsShortEs = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+
+                currentDate = daysEs[now.getDay()] + ", " + now.getDate() + " de " + monthsEs[now.getMonth()];
+                currentDateShort = daysShortEs[now.getDay()] + ", " + now.getDate() + " de " + monthsShortEs[now.getMonth()];
+            }
 
             barContainer.todayDay = now.getDate();
             barContainer.todayMonth = now.getMonth();
@@ -178,6 +287,7 @@ PlasmoidItem {
                         if (data.audio_devices !== undefined) barContainer.audioDevices = data.audio_devices;
                         if (data.default_sink !== undefined) barContainer.defaultSink = data.default_sink;
                         if (data.lang !== undefined) barContainer.lang = data.lang;
+                        if (data.language !== undefined && data.language !== "") barContainer.uiLanguage = data.language;
                         if (data.power_profile !== undefined) barContainer.powerProfile = data.power_profile;
                         if (data.bar_distinct_pills !== undefined) barContainer.barDistinctPills = data.bar_distinct_pills;
                         if (data.bar_mod_settings !== undefined) barContainer.modSettings = data.bar_mod_settings;
@@ -525,7 +635,7 @@ PlasmoidItem {
                         }
                     }
 
-                    ToolTip.visible: mediaMouse.containsMouse && barContainer.mediaTitle !== "" && barContainer.mediaTitle !== "No hay nada reprc"
+                    ToolTip.visible: mediaMouse.containsMouse && barContainer.mediaTitle !== "" && barContainer.mediaTitle !== "No hay nada reproduciéndose" && barContainer.mediaTitle !== "Nothing playing"
                     ToolTip.delay: 500
                     ToolTip.text: barContainer.mediaArtist ? (barContainer.mediaTitle + "\n" + barContainer.mediaArtist) : barContainer.mediaTitle
 
@@ -983,7 +1093,7 @@ PlasmoidItem {
                     RowLayout {
                         Layout.fillWidth: true
                         Text {
-                            text: "☁ El Tiempo • Madrid, ES"
+                            text: barContainer.tr("weather_title") + " • Madrid, ES"
                             font.family: "JetBrainsMono Nerd Font"
                             font.pixelSize: 12
                             font.weight: Font.Bold
@@ -1027,8 +1137,8 @@ PlasmoidItem {
                             }
                             Text {
                                 text: (barContainer.selectedForecastIdx > 0 && barContainer.weatherForecast.length > barContainer.selectedForecastIdx)
-                                      ? ("Pronóstico: " + barContainer.weatherForecast[barContainer.selectedForecastIdx].day)
-                                      : (barContainer.weatherDesc + " • Sensación " + barContainer.weatherFeelsLike)
+                                      ? (barContainer.tr("forecast_prefix") + barContainer.weatherForecast[barContainer.selectedForecastIdx].day)
+                                      : (barContainer.weatherDesc + " • " + barContainer.tr("feels_like") + " " + barContainer.weatherFeelsLike)
                                 font.family: "JetBrainsMono Nerd Font"
                                 font.pixelSize: 11
                                 color: barContainer.themeMuted
@@ -1045,7 +1155,7 @@ PlasmoidItem {
                             RowLayout {
                                 anchors.centerIn: parent; spacing: 4
                                 Text { text: "󰈤"; font.pixelSize: 11; color: barContainer.themeAccent }
-                                Text { text: barContainer.weatherHumidity + "% Hum"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 9; font.weight: Font.Bold; color: barContainer.themeFg }
+                                Text { text: barContainer.weatherHumidity + barContainer.tr("hum"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 9; font.weight: Font.Bold; color: barContainer.themeFg }
                             }
                         }
                         Rectangle {
@@ -1068,9 +1178,9 @@ PlasmoidItem {
 
                     Rectangle { Layout.fillWidth: true; height: 1; color: barContainer.themeBorder }
 
-                    // SECTION 1: HOURLY FORECAST (PRONÓSTICO POR HORAS DINÁMICO POR DÍA)
+                    // SECTION 1: HOURLY FORECAST
                     Text {
-                        text: "󰥔 Pronóstico por Horas (" + ((barContainer.selectedForecastIdx === 0) ? "Hoy" : (barContainer.weatherForecast && barContainer.weatherForecast.length > barContainer.selectedForecastIdx ? barContainer.weatherForecast[barContainer.selectedForecastIdx].day : "Día " + barContainer.selectedForecastIdx)) + ")"
+                        text: "󰥔 " + barContainer.tr("hourly_forecast") + " (" + ((barContainer.selectedForecastIdx === 0) ? barContainer.tr("today") : (barContainer.weatherForecast && barContainer.weatherForecast.length > barContainer.selectedForecastIdx ? barContainer.weatherForecast[barContainer.selectedForecastIdx].day : barContainer.tr("day_prefix") + barContainer.selectedForecastIdx)) + ")"
                         font.family: "JetBrainsMono Nerd Font"
                         font.pixelSize: 10
                         font.weight: Font.Bold
@@ -1133,8 +1243,8 @@ PlasmoidItem {
 
                     Rectangle { Layout.fillWidth: true; height: 1; color: barContainer.themeBorder }
 
-                    // SECTION 2: DAILY FORECAST (PRONÓSTICO A 4 DÍAS)
-                    Text { text: "󰸗 Pronóstico a 4 Días"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeMuted }
+                    // SECTION 2: DAILY FORECAST
+                    Text { text: "󰸗 " + barContainer.tr("four_day_forecast"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeMuted }
 
                     RowLayout {
                         Layout.fillWidth: true
@@ -1270,7 +1380,7 @@ PlasmoidItem {
 
                         Text {
                             text: {
-                                var monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+                                var monthNames = barContainer.tr("cal_months");
                                 return monthNames[barContainer.calMonth] + " " + barContainer.calYear;
                             }
                             font.family: "JetBrainsMono Nerd Font"
@@ -1296,7 +1406,7 @@ PlasmoidItem {
                         Layout.fillWidth: true
                         spacing: 0
                         Repeater {
-                            model: ["L", "M", "X", "J", "V", "S", "D"]
+                            model: barContainer.tr("cal_days_header")
                             delegate: Item {
                                 Layout.fillWidth: true
                                 height: 20
@@ -1406,7 +1516,7 @@ PlasmoidItem {
                         Layout.fillWidth: true
                         spacing: 8
                         Text { text: barContainer.batteryIcon; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 18; color: barContainer.themeAccent }
-                        Text { text: "Batería y Rendimiento"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 12; font.weight: Font.Bold; color: barContainer.themeFg }
+                        Text { text: barContainer.tr("bat_title"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 12; font.weight: Font.Bold; color: barContainer.themeFg }
                     }
 
                     // Battery percentage & progress bar
@@ -1415,7 +1525,7 @@ PlasmoidItem {
                         spacing: 6
                         RowLayout {
                             Layout.fillWidth: true
-                            Text { text: barContainer.batteryCharging ? "Cargando (Conectado)" : "Descargando"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; color: barContainer.themeMuted }
+                            Text { text: barContainer.batteryCharging ? barContainer.tr("charging_ac") : barContainer.tr("discharging"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; color: barContainer.themeMuted }
                             Item { Layout.fillWidth: true }
                             Text { text: barContainer.batteryStr; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 14; font.weight: Font.Black; color: barContainer.themeAccent }
                         }
@@ -1460,7 +1570,7 @@ PlasmoidItem {
                                 spacing: 2
 
                                 Text {
-                                    text: barContainer.batteryCharging ? "Tiempo estimado hasta 100%:" : "Tiempo estimado restante:"
+                                    text: barContainer.batteryCharging ? barContainer.tr("est_time_to_100") : barContainer.tr("est_time_remaining")
                                     font.family: "JetBrainsMono Nerd Font"
                                     font.pixelSize: 9
                                     font.weight: Font.SemiBold
@@ -1468,7 +1578,7 @@ PlasmoidItem {
                                 }
 
                                 Text {
-                                    text: barContainer.batteryTime ? barContainer.batteryTime : "Calculando estimación..."
+                                    text: barContainer.batteryTime ? barContainer.batteryTime : barContainer.tr("calculating_est")
                                     font.family: "JetBrainsMono Nerd Font"
                                     font.pixelSize: 11
                                     font.weight: Font.Bold
@@ -1511,7 +1621,7 @@ PlasmoidItem {
 
                     Rectangle { Layout.fillWidth: true; height: 1; color: barContainer.themeBorder }
 
-                    Text { text: "Perfil de Rendimiento Energético"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeMuted }
+                    Text { text: barContainer.tr("power_profile_title"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeMuted }
 
                     // Power Profiles (Performance, Balanced, Power-saver)
                     ColumnLayout {
@@ -1531,7 +1641,7 @@ PlasmoidItem {
                                 anchors.leftMargin: 12
                                 anchors.rightMargin: 12
                                 Text { text: "󰓅"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 14; color: (barContainer.powerProfile === "performance") ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
-                                Text { text: "Alto Rendimiento (Performance)"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: (barContainer.powerProfile === "performance") ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
+                                Text { text: barContainer.tr("perf_mode"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: (barContainer.powerProfile === "performance") ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
                             }
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -1555,7 +1665,7 @@ PlasmoidItem {
                                 anchors.leftMargin: 12
                                 anchors.rightMargin: 12
                                 Text { text: "󰾆"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 14; color: (barContainer.powerProfile === "balanced") ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
-                                Text { text: "Equilibrado (Balanced)"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: (barContainer.powerProfile === "balanced") ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
+                                Text { text: barContainer.tr("balanced_mode"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: (barContainer.powerProfile === "balanced") ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
                             }
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -1579,7 +1689,7 @@ PlasmoidItem {
                                 anchors.leftMargin: 12
                                 anchors.rightMargin: 12
                                 Text { text: "󰾆"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 14; color: (barContainer.powerProfile === "power-saver") ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
-                                Text { text: "Ahorro de Batería (Power Saver)"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: (barContainer.powerProfile === "power-saver") ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
+                                Text { text: barContainer.tr("power_saver_mode"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: (barContainer.powerProfile === "power-saver") ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
                             }
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -1625,7 +1735,7 @@ PlasmoidItem {
                     RowLayout {
                         spacing: 8
                         Text { text: "󰤨"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 18; color: barContainer.themeAccent }
-                        Text { text: "Conexión de Red"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 12; font.weight: Font.Bold; color: barContainer.themeFg }
+                        Text { text: barContainer.tr("net_title"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 12; font.weight: Font.Bold; color: barContainer.themeFg }
                     }
 
                     Rectangle {
@@ -1643,19 +1753,19 @@ PlasmoidItem {
                             spacing: 6
 
                             RowLayout {
-                                Text { text: "Red Actual:"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; color: barContainer.themeMuted }
+                                Text { text: barContainer.tr("current_net"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; color: barContainer.themeMuted }
                                 Item { Layout.fillWidth: true }
                                 Text { text: barContainer.networkSsid; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; font.weight: Font.Bold; color: barContainer.themeAccent }
                             }
                             RowLayout {
-                                Text { text: "IP Local:"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; color: barContainer.themeMuted }
+                                Text { text: barContainer.tr("local_ip"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; color: barContainer.themeMuted }
                                 Item { Layout.fillWidth: true }
                                 Text { text: barContainer.localIp; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeFg }
                             }
                             RowLayout {
-                                Text { text: "IP Pública:"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; color: barContainer.themeMuted }
+                                Text { text: barContainer.tr("public_ip"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; color: barContainer.themeMuted }
                                 Item { Layout.fillWidth: true }
-                                Text { text: barContainer.publicIp !== "" ? barContainer.publicIp : "Detectando..."; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeAccent }
+                                Text { text: barContainer.publicIp !== "" ? barContainer.publicIp : barContainer.tr("detecting"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeAccent }
                             }
 
                             Rectangle { Layout.fillWidth: true; height: 1; color: barContainer.themeBorder }
@@ -1667,13 +1777,13 @@ PlasmoidItem {
                                 RowLayout {
                                     spacing: 4
                                     Text { text: "󰁅"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 12; color: "#34d399" }
-                                    Text { text: "Bajada: " + barContainer.netRxRate; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeFg }
+                                    Text { text: barContainer.tr("download") + " " + barContainer.netRxRate; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeFg }
                                 }
                                 Item { Layout.fillWidth: true }
                                 RowLayout {
                                     spacing: 4
                                     Text { text: "󰁝"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 12; color: "#38bdf8" }
-                                    Text { text: "Subida: " + barContainer.netTxRate; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeFg }
+                                    Text { text: barContainer.tr("upload") + " " + barContainer.netTxRate; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeFg }
                                 }
                             }
                         }
@@ -1686,7 +1796,7 @@ PlasmoidItem {
                         color: barContainer.themeCard
                         border.color: barContainer.themeAccent
                         border.width: 1
-                        Text { anchors.centerIn: parent; text: "󰤨 Configuración de Red"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeAccent }
+                        Text { anchors.centerIn: parent; text: "󰤨 " + barContainer.tr("net_settings"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeAccent }
                         MouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                             onClicked: {
@@ -1730,14 +1840,14 @@ PlasmoidItem {
                     RowLayout {
                         spacing: 8
                         Text { text: barContainer.volumeIcon; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 18; color: barContainer.themeAccent }
-                        Text { text: "Control de Audio"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 12; font.weight: Font.Bold; color: barContainer.themeFg }
+                        Text { text: barContainer.tr("audio_title"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 12; font.weight: Font.Bold; color: barContainer.themeFg }
                         Item { Layout.fillWidth: true }
                         Rectangle {
-                            width: 65; height: 22; radius: 5
+                            width: 75; height: 22; radius: 5
                             color: barContainer.volumeMuted ? "#ef4444" : barContainer.themeCard
                             border.color: barContainer.volumeMuted ? "#ef4444" : barContainer.themeBorder
                             border.width: 1
-                            Text { anchors.centerIn: parent; text: barContainer.volumeMuted ? "Silenciado" : "Silenciar"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 9; font.weight: Font.Bold; color: "#ffffff" }
+                            Text { anchors.centerIn: parent; text: barContainer.volumeMuted ? barContainer.tr("muted") : barContainer.tr("mute"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 9; font.weight: Font.Bold; color: "#ffffff" }
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                 onClicked: barContainer.sendCmd("vol_mute")
@@ -1751,7 +1861,7 @@ PlasmoidItem {
                         spacing: 4
                         RowLayout {
                             Layout.fillWidth: true
-                            Text { text: "Volumen Master"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; color: barContainer.themeMuted }
+                            Text { text: barContainer.tr("master_volume"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; color: barContainer.themeMuted }
                             Item { Layout.fillWidth: true }
                             Text { text: Math.round(volSlider.value) + "%"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 12; font.weight: Font.Bold; color: barContainer.themeAccent }
                         }
@@ -1791,7 +1901,7 @@ PlasmoidItem {
                     Rectangle { Layout.fillWidth: true; height: 1; color: barContainer.themeBorder }
 
                     // Output Devices Header & Smooth Scrollable List
-                    Text { text: "Dispositivo de Salida (Output Device)"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeMuted }
+                    Text { text: barContainer.tr("output_devices"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeMuted }
 
                     ScrollView {
                         Layout.fillWidth: true
@@ -1892,10 +2002,10 @@ PlasmoidItem {
                     RowLayout {
                         spacing: 8
                         Text { text: "󰏘"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 18; color: barContainer.themeAccent }
-                        Text { text: "Cambiador Rápido de Tema"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 12; font.weight: Font.Bold; color: barContainer.themeFg }
+                        Text { text: barContainer.tr("theme_switcher"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 12; font.weight: Font.Bold; color: barContainer.themeFg }
                     }
 
-                    Text { text: "Modo Oscuro (Dark Palettes)"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeMuted }
+                    Text { text: barContainer.tr("dark_palettes"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeMuted }
 
                     // Dark Themes Grid
                     GridLayout {
@@ -1975,7 +2085,7 @@ PlasmoidItem {
 
                     Rectangle { Layout.fillWidth: true; height: 1; color: barContainer.themeBorder }
 
-                    Text { text: "Modo Claro (Light Palettes)"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeMuted }
+                    Text { text: barContainer.tr("light_palettes"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: barContainer.themeMuted }
 
                     // Light Themes Grid
                     GridLayout {
@@ -2087,7 +2197,7 @@ PlasmoidItem {
                     RowLayout {
                         spacing: 8
                         Text { text: "⏻"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 16; color: "#ef4444" }
-                        Text { text: "Gestión de Energía"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 12; font.weight: Font.Bold; color: barContainer.themeFg }
+                        Text { text: barContainer.tr("power_mgmt"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 12; font.weight: Font.Bold; color: barContainer.themeFg }
                     }
 
                     Rectangle { Layout.fillWidth: true; height: 1; color: barContainer.themeBorder }
@@ -2101,7 +2211,7 @@ PlasmoidItem {
                         RowLayout {
                             anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
                             Text { text: "⏻"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 14; color: pwrOffMouse.containsMouse ? "#ffffff" : "#ef4444" }
-                            Text { text: "Apagar Sistema"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; font.weight: Font.Bold; color: pwrOffMouse.containsMouse ? "#ffffff" : barContainer.themeFg }
+                            Text { text: barContainer.tr("shutdown"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; font.weight: Font.Bold; color: pwrOffMouse.containsMouse ? "#ffffff" : barContainer.themeFg }
                         }
                         MouseArea {
                             id: pwrOffMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -2118,7 +2228,7 @@ PlasmoidItem {
                         RowLayout {
                             anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
                             Text { text: "󰑐"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 14; color: pwrRebootMouse.containsMouse ? "#0f172a" : "#f59e0b" }
-                            Text { text: "Reiniciar Equipo"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; font.weight: Font.Bold; color: pwrRebootMouse.containsMouse ? "#0f172a" : barContainer.themeFg }
+                            Text { text: barContainer.tr("reboot"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; font.weight: Font.Bold; color: pwrRebootMouse.containsMouse ? "#0f172a" : barContainer.themeFg }
                         }
                         MouseArea {
                             id: pwrRebootMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -2135,7 +2245,7 @@ PlasmoidItem {
                         RowLayout {
                             anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
                             Text { text: "󰍃"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 14; color: pwrLogoutMouse.containsMouse ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeAccent }
-                            Text { text: "Cerrar Sesión"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; font.weight: Font.Bold; color: pwrLogoutMouse.containsMouse ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
+                            Text { text: barContainer.tr("logout"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; font.weight: Font.Bold; color: pwrLogoutMouse.containsMouse ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
                         }
                         MouseArea {
                             id: pwrLogoutMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -2152,7 +2262,7 @@ PlasmoidItem {
                         RowLayout {
                             anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
                             Text { text: "󰌾"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 14; color: pwrLockMouse.containsMouse ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeAccent }
-                            Text { text: "Bloquear Pantalla"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; font.weight: Font.Bold; color: pwrLockMouse.containsMouse ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
+                            Text { text: barContainer.tr("lock_screen"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; font.weight: Font.Bold; color: pwrLockMouse.containsMouse ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
                         }
                         MouseArea {
                             id: pwrLockMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -2169,7 +2279,7 @@ PlasmoidItem {
                         RowLayout {
                             anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
                             Text { text: "󰤄"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 14; color: pwrSuspendMouse.containsMouse ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeAccent }
-                            Text { text: "Suspender (Dormir)"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; font.weight: Font.Bold; color: pwrSuspendMouse.containsMouse ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
+                            Text { text: barContainer.tr("suspend"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; font.weight: Font.Bold; color: pwrSuspendMouse.containsMouse ? (barContainer.isLightTheme ? "#ffffff" : "#0f172a") : barContainer.themeFg }
                         }
                         MouseArea {
                             id: pwrSuspendMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor

@@ -47,16 +47,37 @@ QtObject {
     property int weatherHum: 55
     property string weatherWind: "4.0 km/h"
     property string weatherPressure: "1013 hPa"
+    property string uiLanguage: "es"
     property string weatherIcon: "󰖙"
     property string weatherDesc: "Despejado"
     property var weatherHourly: []
-    property string mediaTitle: "No hay nada reprc"
+    property string mediaTitle: "No hay nada reproduciéndose"
     property string mediaArtist: ""
     property bool mediaPlaying: false
     property string currentTime: "22:00"
     property string currentDate: "jueves, 15 de octubre"
 
     property bool initialLoaded: false
+
+    property var i18n: ({
+        "es": {
+            "sys_monitor": "Monitor del Sistema",
+            "storage": "Almacenamiento (Libre: ",
+            "feels_like": "Sensación "
+        },
+        "en": {
+            "sys_monitor": "System Monitor",
+            "storage": "Storage (Free: ",
+            "feels_like": "Feels like "
+        }
+    })
+
+    function tr(key) {
+        var dict = i18n[uiLanguage] || i18n["es"];
+        return dict[key] !== undefined ? dict[key] : key;
+    }
+
+    onUiLanguageChanged: updateTime()
 
     function sendCmd(action, val, mod) {
         var url = "http://127.0.0.1:19842/cmd?action=" + action;
@@ -76,9 +97,15 @@ QtObject {
         var h = String(now.getHours()).padStart(2, '0');
         var m = String(now.getMinutes()).padStart(2, '0');
         currentTime = h + ":" + m;
-        var days = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
-        var months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-        currentDate = days[now.getDay()] + ", " + now.getDate() + " de " + months[now.getMonth()];
+        if (uiLanguage === "en") {
+            var daysEn = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            var monthsEn = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            currentDate = daysEn[now.getDay()] + ", " + monthsEn[now.getMonth()] + " " + now.getDate();
+        } else {
+            var daysEs = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+            var monthsEs = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+            currentDate = daysEs[now.getDay()] + ", " + now.getDate() + " de " + monthsEs[now.getMonth()];
+        }
     }
 
     property var timeTimer: Timer {
@@ -147,6 +174,7 @@ QtObject {
                     if (d.media_title !== undefined) root.mediaTitle = d.media_title;
                     if (d.media_artist !== undefined) root.mediaArtist = d.media_artist;
                     if (d.media_playing !== undefined) root.mediaPlaying = d.media_playing;
+                    if (d.language !== undefined && d.language !== "") root.uiLanguage = d.language;
 
                     if (d.theme_bg !== undefined) root.themeBg = d.theme_bg;
                     if (d.theme_card !== undefined) root.themeCard = d.theme_card;
@@ -219,7 +247,7 @@ QtObject {
                 RowLayout {
                     spacing: 8
                     Text { text: "󰍛"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 15; color: root.themeAccent }
-                    Text { text: "Monitor del Sistema"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; font.weight: Font.Bold; color: root.themeFg }
+                    Text { text: root.tr("sys_monitor"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; font.weight: Font.Bold; color: root.themeFg }
                     Item { Layout.fillWidth: true }
                     Text { text: "󰅐 " + root.uptimeStr; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 9; color: root.themeMuted }
                 }
@@ -272,7 +300,7 @@ QtObject {
                     spacing: 3
                     RowLayout {
                         Layout.fillWidth: true
-                        Text { text: "󰋊 Almacenamiento (Libre: " + root.diskFree + " GB)"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 9; color: root.themeMuted }
+                        Text { text: "󰋊 " + root.tr("storage") + root.diskFree + " GB)"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 9; color: root.themeMuted }
                         Item { Layout.fillWidth: true }
                         Text { text: root.diskPct + "%"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: root.themeAccent }
                     }
@@ -424,7 +452,7 @@ QtObject {
                             Item { Layout.fillWidth: true }
                             Text { text: "Madrid, ES"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: root.themeAccent }
                         }
-                        Text { text: root.weatherDesc + " • Sensación " + root.weatherFeels; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; color: root.themeMuted }
+                        Text { text: root.weatherDesc + " • " + root.tr("feels_like") + root.weatherFeels; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; color: root.themeMuted }
                     }
                 }
 
