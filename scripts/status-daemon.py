@@ -263,16 +263,52 @@ def get_gui_env():
     uid = os.getuid()
     runtime_dir = env.get("XDG_RUNTIME_DIR", f"/run/user/{uid}")
     env["XDG_RUNTIME_DIR"] = runtime_dir
+
+    # 1. Prioritize importing active session variables from systemd user environment
+    try:
+        s_out = subprocess.run(["systemctl", "--user", "show-environment"], stdout=subprocess.PIPE, text=True, timeout=0.5).stdout
+        for line in s_out.splitlines():
+            if "=" in line:
+                k, v = line.split("=", 1)
+                if k in ("DISPLAY", "WAYLAND_DISPLAY", "XAUTHORITY", "XDG_CURRENT_DESKTOP", "XDG_SESSION_TYPE", "QT_WAYLAND_RECONNECT"):
+                    env[k] = v
+    except Exception:
+        pass
+
+    # 2. Wayland display detection fallback
     if not env.get("WAYLAND_DISPLAY"):
         for name in ["wayland-0", "wayland-1"]:
             if os.path.exists(os.path.join(runtime_dir, name)):
                 env["WAYLAND_DISPLAY"] = name
                 break
+
+    # 3. X11 display detection fallback: check sockets matching current user uid first
     if not env.get("DISPLAY"):
-        for num in ["0", "1"]:
-            if os.path.exists(f"/tmp/.X11-unix/X{num}"):
-                env["DISPLAY"] = f":{num}"
-                break
+        for num in ["1", "0", "2"]:
+            sock = f"/tmp/.X11-unix/X{num}"
+            if os.path.exists(sock):
+                try:
+                    if os.stat(sock).st_uid == uid:
+                        env["DISPLAY"] = f":{num}"
+                        break
+                except Exception:
+                    pass
+        if not env.get("DISPLAY"):
+            for num in ["0", "1"]:
+                if os.path.exists(f"/tmp/.X11-unix/X{num}"):
+                    env["DISPLAY"] = f":{num}"
+                    break
+
+    # 4. Xauthority detection fallback
+    if not env.get("XAUTHORITY"):
+        import glob
+        xauths = glob.glob(os.path.join(runtime_dir, "xauth_*"))
+        if xauths:
+            xauths.sort(key=lambda p: os.path.getmtime(p), reverse=True)
+            env["XAUTHORITY"] = xauths[0]
+        elif os.path.exists(os.path.expanduser("~/.Xauthority")):
+            env["XAUTHORITY"] = os.path.expanduser("~/.Xauthority")
+
     if not env.get("DBUS_SESSION_BUS_ADDRESS"):
         env["DBUS_SESSION_BUS_ADDRESS"] = f"unix:path={runtime_dir}/bus"
     if not env.get("QT_QPA_PLATFORM"):
@@ -1206,13 +1242,14 @@ class HTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             query = params.get("q", [""])[0].strip().lower()
             if query:
                 filtered = [a for a in apps if query in a["name"].lower() or query in a.get("comment", "").lower() or query in a.get("exec", "").lower()]
+                res = filtered[:50]
             else:
-                filtered = apps
+                res = apps
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
-            self.wfile.write(json.dumps(filtered[:40]).encode("utf-8"))
+            self.wfile.write(json.dumps(res).encode("utf-8"))
 
         elif path == "/cmd":
             action = params.get("action", [""])[0]
