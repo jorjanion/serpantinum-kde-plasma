@@ -1,11 +1,12 @@
 <div align="center">
 
-# 🐍 Serpanplasma
+# 🐍 Serpanplasma — Serpantinum for KDE Plasma 6
 
-**High-fidelity visual and functional recreation of *Serpantinum* engineered natively for KDE Plasma 6 (Wayland) with traditional floating window management.**
+**The floating-window alternative and high-fidelity visual clone of *Serpantinum* engineered natively for KDE Plasma 6 (Wayland).**
 
 [🇪🇸 Español](README.md) | [🇬🇧 English](README_EN.md)
 
+[![Serpantinum Alternative](https://img.shields.io/badge/Serpantinum-KDE_Plasma_6_Alternative-8b5cf6?style=for-the-badge&logo=kde&logoColor=white)](https://github.com/ilyamiro/serpantinum)
 [![KDE Plasma 6](https://img.shields.io/badge/KDE_Plasma-6.0%2B-38bdf8?style=for-the-badge&logo=kde&logoColor=white)](https://kde.org/plasma-desktop/)
 [![Wayland](https://img.shields.io/badge/Display-Wayland-0284c7?style=for-the-badge&logo=wayland&logoColor=white)](https://wayland.freedesktop.org/)
 [![Linux](https://img.shields.io/badge/Linux-All_Distributions-22c55e?style=for-the-badge&logo=linux&logoColor=white)](#-multi-distribution-installation)
