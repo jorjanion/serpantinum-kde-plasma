@@ -2161,12 +2161,12 @@ ApplicationWindow {
                                         anchors.centerIn: parent
                                         spacing: 8
                                         Text { text: "󰊤"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 14; color: "#38bdf8" }
-                                        Text { text: "github.com/jorjanion/Serpanplasma"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: "#f8fafc" }
+                                        Text { text: "github.com/jorjanion/serpantinum-kde-plasma"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 10; font.weight: Font.Bold; color: "#f8fafc" }
                                     }
                                     MouseArea {
                                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            window.sendCmd("open_url", "https://github.com/jorjanion/Serpanplasma");
+                                            window.sendCmd("open_url", "https://github.com/jorjanion/serpantinum-kde-plasma");
                                             window.showToast("Abriendo repositorio de GitHub...");
                                         }
                                     }

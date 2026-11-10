@@ -149,8 +149,8 @@ Instala los equivalentes de: `git`, `python3`, `jq`, `curl`, `playerctl` y `brig
 Una vez instaladas las dependencias, clona el repositorio y ejecuta el instalador automático:
 
 ```bash
-git clone https://github.com/jorjanion/Serpanplasma.git
-cd Serpanplasma
+git clone https://github.com/jorjanion/serpantinum-kde-plasma.git
+cd serpantinum-kde-plasma
 chmod +x install.sh restore.sh
 ./install.sh
 ```
