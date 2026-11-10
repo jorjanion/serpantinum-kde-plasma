@@ -207,6 +207,21 @@ chmod +x "$HOME/.local/bin/serpanplasma-settings"
 cp "$SCRIPT_DIR/configs/applications/serpanplasma-settings.desktop" "$HOME/.local/share/applications/"
 update-desktop-database "$HOME/.local/share/applications" >/dev/null 2>&1 || true
 
+# 14.2. Power Management & Hybrid GPU Optimization
+echo -e "${CYAN}==>${RESET} Configurando optimizaciones de batería y gestión de energía híbrida..."
+mkdir -p "$HOME/.config/environment.d"
+cat << 'EOF' > "$HOME/.config/environment.d/10-nvidia-rtd3.conf"
+__EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json
+KWIN_DRM_DEVICES=/dev/dri/by-path/pci-0000:06:00.0-card:/dev/dri/by-path/pci-0000:01:00.0-card
+EOF
+
+if command -v kwriteconfig6 &>/dev/null; then
+    kwriteconfig6 --file powerdevilrc --group Battery --group Performance --key PowerProfile power-saver >/dev/null 2>&1 || true
+    kwriteconfig6 --file powerdevilrc --group Battery --group Display --key DisplayBrightness 45 >/dev/null 2>&1 || true
+    kwriteconfig6 --file powerdevilrc --group AC --group Performance --key PowerProfile performance >/dev/null 2>&1 || true
+    kwriteconfig6 --file powerdevilrc --group AC --group Display --key DisplayBrightness 80 >/dev/null 2>&1 || true
+fi
+
 
 # 15. Wallpaper Slideshow & Clean Desktop Containment Setup
 echo -e "${CYAN}==>${RESET} Configurando fondos de pantalla y superficie de escritorio limpia..."

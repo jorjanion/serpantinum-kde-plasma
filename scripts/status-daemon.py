@@ -697,6 +697,18 @@ def is_ac_online():
             pass
     return False
 
+def set_display_brightness(pct):
+    """Set brightness via brightnessctl (sysfs) and Powerdevil DBus to guarantee full synchronization."""
+    try:
+        subprocess.Popen(["brightnessctl", "set", f"{pct}%"])
+    except Exception:
+        pass
+    try:
+        dbus_val = int(pct * 100)
+        subprocess.Popen(["qdbus6", "org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement/Actions/BrightnessControl", "setBrightness", str(dbus_val)])
+    except Exception:
+        pass
+
 def apply_power_profile(val, from_user=False):
     """Apply system power profile, refresh rate, brightness, and manage battery profile memory."""
     if val not in ("performance", "balanced", "power-saver"):
@@ -723,30 +735,16 @@ def apply_power_profile(val, from_user=False):
     if val == "power-saver":
         # 60Hz display refresh rate saves ~3-4W
         subprocess.Popen(["kscreen-doctor", "output.eDP-1.mode.1920x1080@60"], env=env)
-        try:
-            subprocess.Popen(["brightnessctl", "set", "45%"])
-        except Exception:
-            pass
+        set_display_brightness(45)
     elif val == "performance":
         # Restore full 144Hz
         subprocess.Popen(["kscreen-doctor", "output.eDP-1.mode.1920x1080@144"], env=env)
-        # Increase brightness to 80% in max performance
-        try:
-            subprocess.Popen(["brightnessctl", "set", "80%"])
-        except Exception:
-            pass
+        set_display_brightness(80)
     elif val == "balanced":
         ac = is_ac_online()
         mode = "1920x1080@144" if ac else "1920x1080@60"
         subprocess.Popen(["kscreen-doctor", f"output.eDP-1.mode.{mode}"], env=env)
-        if not ac:
-            try:
-                cur_b = int(subprocess.check_output(["brightnessctl", "get"]).decode().strip())
-                max_b = int(subprocess.check_output(["brightnessctl", "max"]).decode().strip())
-                if (cur_b / max_b) > 0.70:
-                    subprocess.Popen(["brightnessctl", "set", "60%"])
-            except Exception:
-                pass
+        set_display_brightness(70 if ac else 60)
 
 prev_ac_online = None
 power_transition_lock = threading.Lock()
@@ -1174,10 +1172,29 @@ def spawn_desktop_widgets():
             hide_widgets_from_taskbar()
     threading.Thread(target=_delayed_hide, daemon=True).start()
 
+def ensure_power_profile_sync():
+    """Ensure KDE Powerdevil profiles are properly configured and synchronize power state on boot."""
+    try:
+        subprocess.run(["kwriteconfig6", "--file", "powerdevilrc", "--group", "Battery", "--group", "Performance", "--key", "PowerProfile", "power-saver"], timeout=1.0)
+        subprocess.run(["kwriteconfig6", "--file", "powerdevilrc", "--group", "Battery", "--group", "Display", "--key", "DisplayBrightness", "45"], timeout=1.0)
+        subprocess.run(["kwriteconfig6", "--file", "powerdevilrc", "--group", "AC", "--group", "Performance", "--key", "PowerProfile", "performance"], timeout=1.0)
+        subprocess.run(["kwriteconfig6", "--file", "powerdevilrc", "--group", "AC", "--group", "Display", "--key", "DisplayBrightness", "80"], timeout=1.0)
+    except Exception:
+        pass
+
+    def _delayed_boot_sync():
+        for delay in [2.5, 6.0]:
+            time.sleep(delay)
+            ac = is_ac_online()
+            target = "performance" if ac else settings.get("last_battery_profile", "power-saver")
+            apply_power_profile(target, from_user=False)
+    threading.Thread(target=_delayed_boot_sync, daemon=True).start()
+
 def background_poller():
     ensure_virtual_desktops()
     ensure_serpanplasma_dock()
     ensure_kwin_widget_rules()
+    ensure_power_profile_sync()
     try:
         subprocess.run(["kwriteconfig6", "--file", "kxkbrc", "--group", "Layout", "--key", "LayoutList", "es,us", "--notify"], timeout=1.0)
     except Exception:
