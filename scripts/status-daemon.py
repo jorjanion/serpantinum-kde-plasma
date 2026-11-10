@@ -709,6 +709,47 @@ def set_display_brightness(pct):
     except Exception:
         pass
 
+def set_display_refresh_rate(power_saver=True):
+    """Dynamically set the display refresh rate: minimum rate for power saving, maximum rate for performance."""
+    env = get_gui_env()
+    try:
+        res = subprocess.run(["kscreen-doctor", "-j"], capture_output=True, text=True, timeout=1.5, env=env)
+        if res.stdout:
+            data = json.loads(res.stdout)
+            outputs = data.get("outputs", [])
+            target = None
+            for o in outputs:
+                if o.get("connected") and o.get("enabled"):
+                    name = o.get("name", "")
+                    if o.get("type") == 7 or name.startswith("eDP") or name.startswith("LVDS"):
+                        target = o
+                        break
+            if not target:
+                for o in outputs:
+                    if o.get("connected") and o.get("enabled") and o.get("priority") == 1:
+                        target = o
+                        break
+            if not target and outputs:
+                target = outputs[0]
+
+            if target:
+                out_name = target.get("name")
+                cur_w = target.get("size", {}).get("width")
+                cur_h = target.get("size", {}).get("height")
+                modes = target.get("modes", [])
+                matching = [m for m in modes if m.get("size", {}).get("width") == cur_w and m.get("size", {}).get("height") == cur_h]
+                if matching:
+                    rates = sorted(matching, key=lambda m: m.get("refreshRate", 60))
+                    chosen = rates[0] if power_saver else rates[-1]
+                    m_name = chosen.get("name")
+                    subprocess.Popen(["kscreen-doctor", f"output.{out_name}.mode.{m_name}"], env=env)
+                    return
+    except Exception:
+        pass
+
+    target_mode = "1920x1080@60" if power_saver else "1920x1080@144"
+    subprocess.Popen(["kscreen-doctor", f"output.eDP-1.mode.{target_mode}"], env=env)
+
 def apply_power_profile(val, from_user=False):
     """Apply system power profile, refresh rate, brightness, and manage battery profile memory."""
     if val not in ("performance", "balanced", "power-saver"):
@@ -731,19 +772,15 @@ def apply_power_profile(val, from_user=False):
     with lock:
         state["power_profile"] = val
 
-    env = get_gui_env()
     if val == "power-saver":
-        # 60Hz display refresh rate saves ~3-4W
-        subprocess.Popen(["kscreen-doctor", "output.eDP-1.mode.1920x1080@60"], env=env)
+        set_display_refresh_rate(power_saver=True)
         set_display_brightness(45)
     elif val == "performance":
-        # Restore full 144Hz
-        subprocess.Popen(["kscreen-doctor", "output.eDP-1.mode.1920x1080@144"], env=env)
+        set_display_refresh_rate(power_saver=False)
         set_display_brightness(80)
     elif val == "balanced":
         ac = is_ac_online()
-        mode = "1920x1080@144" if ac else "1920x1080@60"
-        subprocess.Popen(["kscreen-doctor", f"output.eDP-1.mode.{mode}"], env=env)
+        set_display_refresh_rate(power_saver=not ac)
         set_display_brightness(70 if ac else 60)
 
 prev_ac_online = None

@@ -207,19 +207,35 @@ chmod +x "$HOME/.local/bin/serpanplasma-settings"
 cp "$SCRIPT_DIR/configs/applications/serpanplasma-settings.desktop" "$HOME/.local/share/applications/"
 update-desktop-database "$HOME/.local/share/applications" >/dev/null 2>&1 || true
 
-# 14.2. Power Management & Hybrid GPU Optimization
-echo -e "${CYAN}==>${RESET} Configurando optimizaciones de batería y gestión de energía híbrida..."
-mkdir -p "$HOME/.config/environment.d"
-cat << 'EOF' > "$HOME/.config/environment.d/10-nvidia-rtd3.conf"
-__EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json
-KWIN_DRM_DEVICES=/dev/dri/by-path/pci-0000:06:00.0-card:/dev/dri/by-path/pci-0000:01:00.0-card
-EOF
-
+# 14.2. Power Management & Dynamic Hybrid GPU Optimization
+echo -e "${CYAN}==>${RESET} Configurando optimizaciones de batería y gestión de energía..."
 if command -v kwriteconfig6 &>/dev/null; then
     kwriteconfig6 --file powerdevilrc --group Battery --group Performance --key PowerProfile power-saver >/dev/null 2>&1 || true
     kwriteconfig6 --file powerdevilrc --group Battery --group Display --key DisplayBrightness 45 >/dev/null 2>&1 || true
     kwriteconfig6 --file powerdevilrc --group AC --group Performance --key PowerProfile performance >/dev/null 2>&1 || true
     kwriteconfig6 --file powerdevilrc --group AC --group Display --key DisplayBrightness 80 >/dev/null 2>&1 || true
+fi
+
+# Dynamically detect if this machine is a laptop with hybrid graphics (Intel/AMD iGPU + NVIDIA dGPU)
+if command -v lspci &>/dev/null; then
+    has_nvidia=$( { lspci -d "10de:*:0300" 2>/dev/null; lspci -d "10de:*:0302" 2>/dev/null; } | head -n 1 )
+    has_igpu=$( { lspci -d "1002:*:0300" 2>/dev/null; lspci -d "8086:*:0300" 2>/dev/null; } | head -n 1 )
+
+    if [ -n "$has_nvidia" ] && [ -n "$has_igpu" ]; then
+        igpu_pci=$( { lspci -D -d "1002:*:0300" 2>/dev/null; lspci -D -d "8086:*:0300" 2>/dev/null; } | awk '{print $1}' | head -n 1 )
+        dgpu_pci=$( { lspci -D -d "10de:*:0300" 2>/dev/null; lspci -D -d "10de:*:0302" 2>/dev/null; } | awk '{print $1}' | head -n 1 )
+        igpu_card=$(ls -1 /dev/dri/by-path/pci-${igpu_pci}*-card 2>/dev/null | head -n 1)
+        dgpu_card=$(ls -1 /dev/dri/by-path/pci-${dgpu_pci}*-card 2>/dev/null | head -n 1)
+
+        if [ -n "$igpu_card" ] && [ -n "$dgpu_card" ]; then
+            echo -e "   ${GREEN}✓${RESET} Gráficos híbridos detectados ($igpu_pci iGPU + $dgpu_pci NVIDIA). Configurando reposo RTD3 para GPU..."
+            mkdir -p "$HOME/.config/environment.d"
+            cat << EOF > "$HOME/.config/environment.d/10-nvidia-rtd3.conf"
+__EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json
+KWIN_DRM_DEVICES=${igpu_card}:${dgpu_card}
+EOF
+        fi
+    fi
 fi
 
 
