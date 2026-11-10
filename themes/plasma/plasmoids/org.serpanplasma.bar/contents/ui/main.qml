@@ -39,6 +39,8 @@ PlasmoidItem {
         property int batteryPct: 100
         property bool batteryCharging: false
         property string batteryIcon: "󰁹"
+        property string batteryTime: ""
+        property string batteryRate: ""
         property string networkSsid: "Connected"
         property string networkIcon: "󰤨"
         property string localIp: "127.0.0.1"
@@ -162,6 +164,8 @@ PlasmoidItem {
                         if (data.battery_str !== undefined) barContainer.batteryStr = data.battery_str;
                         if (data.battery_charging !== undefined) barContainer.batteryCharging = data.battery_charging;
                         if (data.battery_icon !== undefined) barContainer.batteryIcon = data.battery_icon;
+                        if (data.battery_time !== undefined) barContainer.batteryTime = data.battery_time;
+                        if (data.battery_rate !== undefined) barContainer.batteryRate = data.battery_rate;
                         if (data.network_ssid !== undefined) barContainer.networkSsid = data.network_ssid;
                         if (data.network_icon !== undefined) barContainer.networkIcon = data.network_icon;
                         if (data.local_ip !== undefined) barContainer.localIp = data.local_ip;
@@ -871,6 +875,9 @@ PlasmoidItem {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
+                        ToolTip.visible: batMouse.containsMouse && barContainer.batteryTime !== ""
+                        ToolTip.delay: 400
+                        ToolTip.text: barContainer.batteryStr + " • " + barContainer.batteryTime + (barContainer.batteryRate ? " (" + barContainer.batteryRate + ")" : "")
                         onClicked: {
                             barContainer.toggleDialog(batteryDialog, "battery");
                         }
@@ -1384,9 +1391,9 @@ PlasmoidItem {
 
             mainItem: Rectangle {
                 width: 350
-                height: 275
+                height: 350
                 implicitWidth: 350
-                implicitHeight: 275
+                implicitHeight: 350
                 color: barContainer.themeBg
                 radius: 14
                 border.color: barContainer.themeAccent
@@ -1425,6 +1432,82 @@ PlasmoidItem {
                                 height: parent.height
                                 radius: 4
                                 color: (barContainer.batteryPct <= 20) ? "#ef4444" : ((barContainer.batteryPct <= 45) ? "#f59e0b" : barContainer.themeAccent)
+                            }
+                        }
+                    }
+
+                    // Real-time battery time & power consumption estimation card
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 52
+                        radius: 8
+                        color: barContainer.themeCard
+                        border.color: barContainer.themeBorder
+                        border.width: 1
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 12
+                            anchors.rightMargin: 12
+                            spacing: 10
+
+                            Text {
+                                text: barContainer.batteryCharging ? "󰂄" : (barContainer.batteryPct <= 20 ? "󰂃" : "󱎫")
+                                font.family: "JetBrainsMono Nerd Font"
+                                font.pixelSize: 20
+                                color: barContainer.batteryCharging ? "#10b981" : (barContainer.batteryPct <= 20 ? "#ef4444" : barContainer.themeAccent)
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 2
+
+                                Text {
+                                    text: barContainer.batteryCharging ? "Tiempo estimado hasta 100%:" : "Tiempo estimado restante:"
+                                    font.family: "JetBrainsMono Nerd Font"
+                                    font.pixelSize: 9
+                                    font.weight: Font.SemiBold
+                                    color: barContainer.themeMuted
+                                }
+
+                                Text {
+                                    text: barContainer.batteryTime ? barContainer.batteryTime : "Calculando estimación..."
+                                    font.family: "JetBrainsMono Nerd Font"
+                                    font.pixelSize: 11
+                                    font.weight: Font.Bold
+                                    color: barContainer.themeFg
+                                    elide: Text.ElideRight
+                                }
+                            }
+
+                            // Power consumption / charging rate capsule
+                            Rectangle {
+                                visible: barContainer.batteryRate !== ""
+                                radius: 6
+                                color: barContainer.isLightTheme ? "#cbd5e1" : "#1e293b"
+                                height: 26
+                                implicitWidth: rateLabel.implicitWidth + 16
+                                border.color: barContainer.batteryCharging ? "#10b981" : barContainer.themeBorder
+                                border.width: 1
+
+                                RowLayout {
+                                    anchors.centerIn: parent
+                                    spacing: 4
+                                    Text {
+                                        text: barContainer.batteryCharging ? "⚡" : "󰚥"
+                                        font.family: "JetBrainsMono Nerd Font"
+                                        font.pixelSize: 10
+                                        color: barContainer.batteryCharging ? "#10b981" : (barContainer.batteryPct <= 20 ? "#ef4444" : barContainer.themeAccent)
+                                    }
+                                    Text {
+                                        id: rateLabel
+                                        text: barContainer.batteryRate
+                                        font.family: "JetBrainsMono Nerd Font"
+                                        font.pixelSize: 10
+                                        font.weight: Font.Bold
+                                        color: barContainer.batteryCharging ? "#10b981" : barContainer.themeFg
+                                    }
+                                }
                             }
                         }
                     }

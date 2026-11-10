@@ -204,6 +204,10 @@ state = {
     "battery_str": "100%",
     "battery_charging": False,
     "battery_icon": "󰁹",
+    "battery_time": "Calculando...",
+    "battery_rate": "",
+    "battery_seconds": 0,
+    "battery_watts": 0.0,
     "network": "Connected",
     "network_icon": "󰤨",
     "network_ssid": "Connected",
@@ -804,6 +808,8 @@ def check_power_source_transition():
 
         if prev_ac_online != ac_now:
             prev_ac_online = ac_now
+            global ema_battery_power
+            ema_battery_power = None
             if ac_now:
                 # Charger PLUGGED IN -> switch to max performance
                 current = settings.get("power_profile", state.get("power_profile", "power-saver"))
@@ -826,31 +832,162 @@ def uevent_power_listener():
     except Exception:
         pass
 
+ema_battery_power = None
+
+def get_upower_battery_data():
+    """Query UPower via busctl for kernel-filtered time to empty/full and power rate."""
+    try:
+        res = subprocess.run([
+            "busctl", "--json=short", "call",
+            "org.freedesktop.UPower",
+            "/org/freedesktop/UPower",
+            "org.freedesktop.UPower",
+            "EnumerateDevices"
+        ], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=0.8)
+        if not res.stdout:
+            return None
+        devs = json.loads(res.stdout).get("data", [[]])[0]
+        bat_dev = next((d for d in devs if "battery" in d), None)
+        if not bat_dev:
+            return None
+        res2 = subprocess.run([
+            "busctl", "--json=short", "call",
+            "org.freedesktop.UPower",
+            bat_dev,
+            "org.freedesktop.DBus.Properties",
+            "GetAll",
+            "s", "org.freedesktop.UPower.Device"
+        ], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=0.8)
+        if not res2.stdout:
+            return None
+        p = json.loads(res2.stdout).get("data", [{}])[0]
+        return {
+            "time_empty": p.get("TimeToEmpty", {}).get("data", 0),
+            "time_full": p.get("TimeToFull", {}).get("data", 0),
+            "rate": p.get("EnergyRate", {}).get("data", 0.0),
+            "pct": p.get("Percentage", {}).get("data", 0.0)
+        }
+    except Exception:
+        return None
+
 def update_battery():
-    global state
+    global state, ema_battery_power
     check_power_source_transition()
 
-    bat_dirs = [d for d in os.listdir("/sys/class/power_supply") if d.startswith("BAT")] if os.path.exists("/sys/class/power_supply") else []
-    if bat_dirs:
-        b_dir = os.path.join("/sys/class/power_supply", bat_dirs[0])
-        try:
-            with open(os.path.join(b_dir, "capacity"), "r") as f:
-                cap = int(f.read().strip())
-            with open(os.path.join(b_dir, "status"), "r") as f:
-                b_stat = f.read().strip()
-            ac_online = is_ac_online()
-            charging = (b_stat == "Charging") or ac_online
-            icons = ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
-            idx = min(max(int(cap / 10) - 1, 0), 9)
-            icon = "󰂄" if charging else icons[idx]
+    base = "/sys/class/power_supply"
+    bat_dirs = [d for d in os.listdir(base) if d.startswith("BAT")] if os.path.exists(base) else []
+    if not bat_dirs:
+        return
 
-            with lock:
-                state["battery"] = cap
-                state["battery_str"] = f"{cap}%"
-                state["battery_charging"] = charging
-                state["battery_icon"] = icon
+    b_dir = os.path.join(base, bat_dirs[0])
+
+    def read_str(fname, default=""):
+        try:
+            with open(os.path.join(b_dir, fname), "r") as f:
+                return f.read().strip()
         except Exception:
-            pass
+            return default
+
+    def read_float(fname, default=0.0):
+        try:
+            with open(os.path.join(b_dir, fname), "r") as f:
+                return float(f.read().strip())
+        except Exception:
+            return default
+
+    cap = int(read_float("capacity", 100))
+    b_stat = read_str("status", "Unknown")
+    ac_online = is_ac_online()
+    is_charging = (b_stat == "Charging") or (ac_online and cap < 99 and b_stat != "Discharging")
+
+    energy_now = read_float("energy_now", 0.0)
+    energy_full = read_float("energy_full", 0.0)
+    power_now = read_float("power_now", 0.0)
+
+    # Some systems report charge_now and current_now (in uAh and uA)
+    if energy_now == 0.0 and read_float("charge_now", 0.0) > 0.0:
+        voltage = read_float("voltage_now", 0.0) / 1e6
+        if voltage <= 0:
+            voltage = read_float("voltage_min_design", 0.0) / 1e6
+        energy_now = read_float("charge_now", 0.0) * voltage
+        energy_full = read_float("charge_full", 0.0) * voltage
+        power_now = read_float("current_now", 0.0) * voltage
+
+    inst_watts = (power_now / 1e6) if power_now > 0 else 0.0
+
+    if ema_battery_power is None or ema_battery_power <= 0:
+        ema_battery_power = inst_watts
+    elif inst_watts > 0:
+        # Smooth instantaneous power draw with an exponential moving average
+        ema_battery_power = 0.20 * inst_watts + 0.80 * ema_battery_power
+
+    # Query UPower DBus metrics
+    upower = get_upower_battery_data()
+    upower_secs = 0
+    upower_rate = 0.0
+    if upower:
+        upower_rate = upower.get("rate", 0.0)
+        upower_secs = upower.get("time_full", 0) if is_charging else upower.get("time_empty", 0)
+
+    active_watts = upower_rate if upower_rate > 0 else ema_battery_power
+    secs = upower_secs
+
+    # If UPower didn't return an estimate, calculate directly from sysfs energy and active rate
+    if secs <= 0 and active_watts > 0:
+        if is_charging:
+            rem_wh = max(0.0, (energy_full - energy_now) / 1e6)
+            if rem_wh > 0:
+                secs = int((rem_wh / active_watts) * 3600)
+                # Apply taper factor for constant-voltage saturation phase above 85%
+                if cap >= 85:
+                    secs = int(secs * 1.25)
+        else:
+            cur_wh = energy_now / 1e6
+            if cur_wh > 0:
+                secs = int((cur_wh / active_watts) * 3600)
+
+    # Human-friendly Spanish time estimation
+    if b_stat == "Full" or (ac_online and cap >= 100):
+        time_str = "Carga completa (100%)"
+        rate_str = "Conectado a CA"
+    elif is_charging:
+        if secs >= 60:
+            mins = int(round(secs / 60))
+            hrs = mins // 60
+            rmins = mins % 60
+            if hrs > 0:
+                time_str = f"~{hrs} h {rmins} min hasta 100%" if rmins > 0 else f"~{hrs} h hasta 100%"
+            else:
+                time_str = f"~{rmins} min hasta 100%"
+        else:
+            time_str = "Calculando tiempo..."
+        rate_str = f"+{active_watts:.1f} W" if active_watts > 0 else "Cargando"
+    else:
+        if secs >= 60:
+            mins = int(round(secs / 60))
+            hrs = mins // 60
+            rmins = mins % 60
+            if hrs > 0:
+                time_str = f"~{hrs} h {rmins} min restantes" if rmins > 0 else f"~{hrs} h restantes"
+            else:
+                time_str = f"~{rmins} min restantes"
+        else:
+            time_str = "Calculando tiempo..."
+        rate_str = f"-{active_watts:.1f} W" if active_watts > 0 else ""
+
+    icons = ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
+    idx = min(max(int(cap / 10) - 1, 0), 9)
+    icon = "󰂄" if is_charging else icons[idx]
+
+    with lock:
+        state["battery"] = cap
+        state["battery_str"] = f"{cap}%"
+        state["battery_charging"] = is_charging
+        state["battery_icon"] = icon
+        state["battery_time"] = time_str
+        state["battery_rate"] = rate_str
+        state["battery_seconds"] = secs
+        state["battery_watts"] = round(active_watts, 1) if active_watts else 0.0
 
 last_net_check = 0
 cached_ssid = "Connected"
@@ -1842,6 +1979,10 @@ class HTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
 def main():
     ensure_virtual_desktops()
+    try:
+        update_battery()
+    except Exception:
+        pass
     poller = threading.Thread(target=background_poller, daemon=True)
     poller.start()
 
