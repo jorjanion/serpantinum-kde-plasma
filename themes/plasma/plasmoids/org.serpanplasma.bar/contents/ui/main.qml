@@ -875,9 +875,6 @@ PlasmoidItem {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        ToolTip.visible: batMouse.containsMouse && barContainer.batteryTime !== ""
-                        ToolTip.delay: 400
-                        ToolTip.text: barContainer.batteryStr + " • " + barContainer.batteryTime + (barContainer.batteryRate ? " (" + barContainer.batteryRate + ")" : "")
                         onClicked: {
                             barContainer.toggleDialog(batteryDialog, "battery");
                         }
