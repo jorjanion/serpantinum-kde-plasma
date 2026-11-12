@@ -285,11 +285,16 @@ if command -v lspci &>/dev/null; then
 
         if [ -n "$igpu_card" ] && [ -n "$dgpu_card" ]; then
             msg "   ${GREEN}✓${RESET} Gráficos híbridos detectados ($igpu_pci iGPU + $dgpu_pci NVIDIA). Configurando reposo RTD3 para GPU..." "   ${GREEN}✓${RESET} Hybrid graphics detected ($igpu_pci iGPU + $dgpu_pci NVIDIA). Configuring RTD3 GPU sleep..."
-            mkdir -p "$HOME/.config/environment.d"
+            # Symlink without colons so KWin's colon-delimited KWIN_DRM_DEVICES parser
+            # does not split PCI addresses (pci-0000:XX:00.0-card) and only binds the iGPU.
+            mkdir -p "$HOME/.local/share/serpanplasma/dri" "$HOME/.config/environment.d"
+            igpu_link="$HOME/.local/share/serpanplasma/dri/igpu-card"
+            ln -sfn "$igpu_card" "$igpu_link"
             cat << EOF > "$HOME/.config/environment.d/10-nvidia-rtd3.conf"
 __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json
-KWIN_DRM_DEVICES=${igpu_card}:${dgpu_card}
+KWIN_DRM_DEVICES=${igpu_link}
 EOF
+            systemctl --user set-environment __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json KWIN_DRM_DEVICES="${igpu_link}" 2>/dev/null || true
         fi
     fi
 fi

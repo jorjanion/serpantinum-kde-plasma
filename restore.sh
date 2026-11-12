@@ -66,6 +66,8 @@ done
 rm -rf "$HOME/.local/share/plasma/plasmoids/org.serpanplasma.bar" 2>/dev/null || true
 rm -rf "$HOME/.local/share/plasma/desktoptheme/Serpanplasma" 2>/dev/null || true
 rm -rf "$HOME/.local/share/serpanplasma" 2>/dev/null || true
+rm -f "$HOME/.config/environment.d/10-nvidia-rtd3.conf" 2>/dev/null || true
+systemctl --user unset-environment KWIN_DRM_DEVICES __EGL_VENDOR_LIBRARY_FILENAMES 2>/dev/null || true
 rm -f "$HOME/.local/bin/serpanplasma-settings" 2>/dev/null || true
 rm -f "$HOME/.local/share/applications/serpanplasma-settings.desktop" 2>/dev/null || true
 
