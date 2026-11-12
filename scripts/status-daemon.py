@@ -54,6 +54,8 @@ DEFAULT_SETTINGS = {
     "active_scope": "current",
     "color_scheme": "Serpanplasma-Obsidian",
     "language": "es",
+    "temp_unit": "C",
+    "date_format": "dmy_text",
     "wallpaper_slideshow": True,
     "wallpaper_interval": 900,
     "desktop_widgets": False,
@@ -195,32 +197,44 @@ def save_setting(key, value):
 
 load_settings()
 
+def convert_temp(temp_c, unit="C"):
+    """Convert a Celsius temperature value to the requested unit ('C' or 'F')."""
+    if unit == "F":
+        return temp_c * 9.0 / 5.0 + 32.0
+    return temp_c
+
+_init_temp_unit = settings.get("temp_unit", "C")
+_init_lang = settings.get("language", "es")
+_init_conn_str = "Connected" if _init_lang == "en" else "Conectado"
+
 state = {
-    "media_title": "Nothing playing" if settings.get("language") == "en" else "No hay nada reproduciéndose",
+    "media_title": "Nothing playing" if _init_lang == "en" else "No hay nada reproduciéndose",
     "media_artist": "",
     "media_playing": False,
     "media_status": "Stopped",
     "active_popup": "",
-    "language": settings.get("language", "es"),
+    "language": _init_lang,
+    "temp_unit": _init_temp_unit,
+    "date_format": settings.get("date_format", "dmy_text"),
     "battery": 100,
     "battery_str": "100%",
     "battery_charging": False,
     "battery_icon": "󰁹",
-    "battery_time": "Calculating..." if settings.get("language") == "en" else "Calculando...",
+    "battery_time": "Calculating..." if _init_lang == "en" else "Calculando...",
     "battery_rate": "",
     "battery_seconds": 0,
     "battery_watts": 0.0,
-    "network": "Connected",
+    "network": _init_conn_str,
     "network_icon": "󰤨",
-    "network_ssid": "Connected",
+    "network_ssid": _init_conn_str,
     "local_ip": "127.0.0.1",
-    "public_ip": "Fetching..." if settings.get("language") == "en" else "Obteniendo...",
+    "public_ip": "Fetching..." if _init_lang == "en" else "Obteniendo...",
     "net_rx_rate": "0 KB/s",
     "net_tx_rate": "0 KB/s",
     "desktop": 1,
     "desktops_count": 8,
-    "temp": "22.1°C",
-    "weather_feels_like": "21.0°C",
+    "temp": f"{convert_temp(22.1, _init_temp_unit):.1f}°{_init_temp_unit}",
+    "weather_feels_like": f"{convert_temp(21.0, _init_temp_unit):.1f}°{_init_temp_unit}",
     "weather_humidity": 55,
     "weather_wind": "4.0 km/h",
     "weather_icon": "󰖙",
@@ -545,6 +559,7 @@ def update_weather():
         pressure = round(cur.get("surface_pressure", 1013))
         code = cur.get("weather_code", 0)
 
+        temp_unit = settings.get("temp_unit", "C")
         lang = settings.get("language", "es")
         code_map = {
             0: ("󰖙", "Despejado", "Clear sky"),
@@ -587,8 +602,8 @@ def update_weather():
             forecast.append({
                 "day": d_name,
                 "icon": d_icon,
-                "max": f"{round(max_list[idx])}°",
-                "min": f"{round(min_list[idx])}°"
+                "max": f"{round(convert_temp(max_list[idx], temp_unit))}°",
+                "min": f"{round(convert_temp(min_list[idx], temp_unit))}°"
             })
 
         h_times = hourly.get("time", [])
@@ -605,7 +620,7 @@ def update_weather():
             hh = raw_t.split("T")[-1] if "T" in raw_t else raw_t
             h_code = h_codes[i] if i < len(h_codes) else 0
             h_icon = code_map.get(h_code, ("☁", "", ""))[0]
-            h_temp = f"{round(h_temps[i])}°" if i < len(h_temps) else ""
+            h_temp = f"{round(convert_temp(h_temps[i], temp_unit))}°" if i < len(h_temps) else ""
             h_pop = f"{h_pops[i]}%" if i < len(h_pops) else "0%"
             next_24h.append({
                 "time": hh,
@@ -632,7 +647,7 @@ def update_weather():
                 hh = raw_t.split("T")[-1] if "T" in raw_t else raw_t
                 h_code = h_codes[i] if i < len(h_codes) else 0
                 h_icon = code_map.get(h_code, ("☁", "", ""))[0]
-                h_temp = f"{round(h_temps[i])}°" if i < len(h_temps) else ""
+                h_temp = f"{round(convert_temp(h_temps[i], temp_unit))}°" if i < len(h_temps) else ""
                 h_pop = f"{h_pops[i]}%" if i < len(h_pops) else "0%"
                 day_hours.append({
                     "time": hh,
@@ -644,8 +659,10 @@ def update_weather():
 
         with lock:
             if temp is not None:
-                state["temp"] = f"{temp:.1f}°C"
-                state["weather_feels_like"] = f"{feels:.1f}°C"
+                disp_temp = convert_temp(temp, temp_unit)
+                disp_feels = convert_temp(feels, temp_unit)
+                state["temp"] = f"{disp_temp:.1f}°{temp_unit}"
+                state["weather_feels_like"] = f"{disp_feels:.1f}°{temp_unit}"
                 state["weather_humidity"] = hum
                 state["weather_wind"] = f"{wind:.1f} km/h"
                 state["weather_pressure"] = f"{pressure} hPa"
@@ -1000,7 +1017,7 @@ def update_battery():
         state["battery_watts"] = round(active_watts, 1) if active_watts else 0.0
 
 last_net_check = 0
-cached_ssid = "Connected"
+cached_ssid = ""
 cached_local_ip = "127.0.0.1"
 
 def get_local_ip():
@@ -1021,14 +1038,27 @@ def update_network():
         last_net_check = now
         cached_local_ip = get_local_ip()
         ssid = ""
+        nm_env = dict(os.environ)
+        nm_env["LC_ALL"] = "C"
         try:
-            res = subprocess.run(["nmcli", "-t", "-f", "active,ssid", "dev", "wifi"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=1.5)
+            res = subprocess.run(["nmcli", "-t", "-f", "active,ssid", "dev", "wifi"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=1.5, env=nm_env)
             for line in res.stdout.splitlines():
                 if line.startswith("yes:"):
-                    ssid = line.split(":", 1)[1]
+                    ssid = line.split(":", 1)[1].replace("\\:", ":").strip()
                     break
         except Exception:
             pass
+        if not ssid:
+            try:
+                res = subprocess.run(["nmcli", "-t", "-f", "TYPE,NAME", "connection", "show", "--active"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=1.5, env=nm_env)
+                for line in res.stdout.splitlines():
+                    if ":" in line:
+                        ctype, cname = line.split(":", 1)
+                        if ctype == "802-11-wireless" and cname.strip():
+                            ssid = cname.replace("\\:", ":").strip()
+                            break
+            except Exception:
+                pass
         if not ssid:
             try:
                 eth_paths = [f for f in os.listdir("/sys/class/net") if f.startswith("e") or f.startswith("en")]
@@ -1041,11 +1071,14 @@ def update_network():
                 pass
         cached_ssid = ssid
 
+    lang = settings.get("language", "es")
     is_connected = (cached_ssid != "" or cached_local_ip != "127.0.0.1")
     icon = "󰈀" if cached_ssid == "Ethernet" else ("󰤨" if is_connected else "󰤭")
+    fallback_conn = "Connected" if lang == "en" else "Conectado"
+    fallback_disc = "Disconnected" if lang == "en" else "Desconectado"
     with lock:
-        state["network"] = "Connected" if is_connected else "Disconnected"
-        state["network_ssid"] = cached_ssid if cached_ssid else ("Connected" if is_connected else "Disconnected")
+        state["network"] = fallback_conn if is_connected else fallback_disc
+        state["network_ssid"] = cached_ssid if cached_ssid else (fallback_conn if is_connected else fallback_disc)
         state["network_icon"] = icon
         state["local_ip"] = cached_local_ip
 
@@ -1984,9 +2017,27 @@ class HTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     update_battery()
                     update_media()
                     update_weather()
+                    update_network()
                     update_audio_devices()
                 except Exception:
                     pass
+
+            elif action == "set_temp_unit" and val.upper() in ("C", "F"):
+                unit = val.upper()
+                settings["temp_unit"] = unit
+                save_setting("temp_unit", unit)
+                with lock:
+                    state["temp_unit"] = unit
+                try:
+                    update_weather()
+                except Exception:
+                    pass
+
+            elif action == "set_date_format" and val in ("dmy_text", "mdy_text", "dmy_num", "mdy_num", "iso"):
+                settings["date_format"] = val
+                save_setting("date_format", val)
+                with lock:
+                    state["date_format"] = val
 
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
@@ -2005,6 +2056,7 @@ def main():
     ensure_virtual_desktops()
     try:
         update_battery()
+        update_network()
     except Exception:
         pass
     poller = threading.Thread(target=background_poller, daemon=True)

@@ -69,6 +69,8 @@ ApplicationWindow {
     property bool widgetWeatherEnabled: true
     property bool widgetMusicEnabled: true
     property string activeTheme: "Serpanplasma-Obsidian"
+    property string tempUnit: "C"
+    property string dateFormat: "dmy_text"
 
     function showToast(msg) {
         toastMessage = msg;
@@ -142,6 +144,8 @@ ApplicationWindow {
                     }
                     if (d.color_scheme !== undefined) window.activeTheme = d.color_scheme;
                     if (d.language !== undefined && d.language !== "") window.uiLanguage = d.language;
+                    if (d.temp_unit !== undefined && d.temp_unit !== "") window.tempUnit = d.temp_unit;
+                    if (d.date_format !== undefined && d.date_format !== "") window.dateFormat = d.date_format;
                 } catch(e) {}
             }
         };
@@ -745,6 +749,162 @@ ApplicationWindow {
                                             window.barFloating = checked;
                                             window.sendCmd("set_bar_floating", checked ? "true" : "false");
                                             window.showToast(checked ? window.t("Barra superior en modo flotante", "Top bar in floating mode") : window.t("Barra superior acoplada al borde", "Top bar docked to edge"));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Formato de Fecha y Unidades
+                        Rectangle {
+                            Layout.fillWidth: true
+                            implicitHeight: unitsCol.implicitHeight + 28
+                            radius: 12
+                            color: "#0f172a"
+                            border.color: "#1e293b"
+                            border.width: 1
+
+                            ColumnLayout {
+                                id: unitsCol
+                                anchors.fill: parent
+                                anchors.margins: 14
+                                spacing: 14
+
+                                Text { text: window.t("Fecha y Unidades de Temperatura", "Date Format & Temperature Units"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 12; font.weight: Font.Bold; color: "#f8fafc" }
+
+                                // Unidad de Temperatura (°C / °F)
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 12
+                                    Text { text: window.t("Unidad de temperatura", "Temperature Unit"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; color: "#cbd5e1" }
+                                    Item { Layout.fillWidth: true }
+                                    Rectangle {
+                                        width: 240
+                                        height: 32
+                                        radius: 8
+                                        color: "#1e293b"
+                                        border.color: "#334155"
+                                        border.width: 1
+
+                                        RowLayout {
+                                            anchors.fill: parent
+                                            anchors.margins: 2
+                                            spacing: 2
+
+                                            Rectangle {
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+                                                radius: 6
+                                                color: (window.tempUnit === "C") ? "#38bdf8" : (mouseC.containsMouse ? "#0f172a" : "transparent")
+                                                Text {
+                                                    anchors.centerIn: parent
+                                                    text: "°C (Celsius)"
+                                                    font.family: "JetBrainsMono Nerd Font"
+                                                    font.pixelSize: 10
+                                                    font.weight: (window.tempUnit === "C") ? Font.Bold : Font.Normal
+                                                    color: (window.tempUnit === "C") ? "#0f172a" : "#94a3b8"
+                                                }
+                                                MouseArea {
+                                                    id: mouseC
+                                                    anchors.fill: parent
+                                                    hoverEnabled: true
+                                                    cursorShape: Qt.PointingHandCursor
+                                                    onClicked: {
+                                                        window.tempUnit = "C";
+                                                        window.sendCmd("set_temp_unit", "C");
+                                                        window.showToast(window.t("Temperatura cambiada a °C", "Temperature unit set to °C"));
+                                                    }
+                                                }
+                                            }
+
+                                            Rectangle {
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+                                                radius: 6
+                                                color: (window.tempUnit === "F") ? "#38bdf8" : (mouseF.containsMouse ? "#0f172a" : "transparent")
+                                                Text {
+                                                    anchors.centerIn: parent
+                                                    text: "°F (Fahrenheit)"
+                                                    font.family: "JetBrainsMono Nerd Font"
+                                                    font.pixelSize: 10
+                                                    font.weight: (window.tempUnit === "F") ? Font.Bold : Font.Normal
+                                                    color: (window.tempUnit === "F") ? "#0f172a" : "#94a3b8"
+                                                }
+                                                MouseArea {
+                                                    id: mouseF
+                                                    anchors.fill: parent
+                                                    hoverEnabled: true
+                                                    cursorShape: Qt.PointingHandCursor
+                                                    onClicked: {
+                                                        window.tempUnit = "F";
+                                                        window.sendCmd("set_temp_unit", "F");
+                                                        window.showToast(window.t("Temperatura cambiada a °F", "Temperature unit set to °F"));
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Formato de Fecha
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 8
+                                    Text { text: window.t("Formato de fecha (barra, calendario y widget)", "Date Format (top bar, calendar & widget)"); font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 11; color: "#cbd5e1" }
+
+                                    GridLayout {
+                                        Layout.fillWidth: true
+                                        columns: 3
+                                        columnSpacing: 8
+                                        rowSpacing: 8
+
+                                        Repeater {
+                                            model: [
+                                                { id: "dmy_text", label: window.t("Europeo texto", "European text"), sample: window.t("jue, 12 de nov", "Thu, 12 Nov") },
+                                                { id: "mdy_text", label: window.t("Americano texto", "American text"), sample: window.t("jue, nov 12", "Thu, Nov 12") },
+                                                { id: "dmy_num", label: window.t("Europeo numérico", "European numeric"), sample: "12/11/2026" },
+                                                { id: "mdy_num", label: window.t("Americano numérico", "American numeric"), sample: "11/12/2026" },
+                                                { id: "iso", label: "ISO 8601", sample: "2026-11-12" }
+                                            ]
+                                            delegate: Rectangle {
+                                                Layout.fillWidth: true
+                                                height: 46
+                                                radius: 8
+                                                color: (window.dateFormat === modelData.id) ? "#1e293b" : (dfMouse.containsMouse ? "#172033" : "#0b1120")
+                                                border.color: (window.dateFormat === modelData.id) ? "#38bdf8" : "#1e293b"
+                                                border.width: (window.dateFormat === modelData.id) ? 2 : 1
+
+                                                ColumnLayout {
+                                                    anchors.centerIn: parent
+                                                    spacing: 2
+                                                    Text {
+                                                        text: modelData.label
+                                                        font.family: "JetBrainsMono Nerd Font"
+                                                        font.pixelSize: 10
+                                                        font.weight: (window.dateFormat === modelData.id) ? Font.Bold : Font.DemiBold
+                                                        color: (window.dateFormat === modelData.id) ? "#38bdf8" : "#f8fafc"
+                                                        Layout.alignment: Qt.AlignHCenter
+                                                    }
+                                                    Text {
+                                                        text: modelData.sample
+                                                        font.family: "JetBrainsMono Nerd Font"
+                                                        font.pixelSize: 9
+                                                        color: "#94a3b8"
+                                                        Layout.alignment: Qt.AlignHCenter
+                                                    }
+                                                }
+                                                MouseArea {
+                                                    id: dfMouse
+                                                    anchors.fill: parent
+                                                    hoverEnabled: true
+                                                    cursorShape: Qt.PointingHandCursor
+                                                    onClicked: {
+                                                        window.dateFormat = modelData.id;
+                                                        window.sendCmd("set_date_format", modelData.id);
+                                                        window.showToast(window.t("Formato de fecha actualizado: ", "Date format updated: ") + modelData.sample);
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }

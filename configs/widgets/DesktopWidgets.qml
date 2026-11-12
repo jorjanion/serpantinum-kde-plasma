@@ -48,6 +48,8 @@ QtObject {
     property string weatherWind: "4.0 km/h"
     property string weatherPressure: "1013 hPa"
     property string uiLanguage: "es"
+    property string dateFormat: "dmy_text"
+    property string tempUnit: "C"
     property string weatherIcon: "󰖙"
     property string weatherDesc: "Despejado"
     property var weatherHourly: []
@@ -78,6 +80,7 @@ QtObject {
     }
 
     onUiLanguageChanged: updateTime()
+    onDateFormatChanged: updateTime()
 
     function sendCmd(action, val, mod) {
         var url = "http://127.0.0.1:19842/cmd?action=" + action;
@@ -97,14 +100,31 @@ QtObject {
         var h = String(now.getHours()).padStart(2, '0');
         var m = String(now.getMinutes()).padStart(2, '0');
         currentTime = h + ":" + m;
-        if (uiLanguage === "en") {
-            var daysEn = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            var monthsEn = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            currentDate = daysEn[now.getDay()] + ", " + monthsEn[now.getMonth()] + " " + now.getDate();
+        var days = (uiLanguage === "en")
+            ? ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+            : ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+        var months = (uiLanguage === "en")
+            ? ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+            : ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+        var d = now.getDate();
+        var dd = String(d).padStart(2, '0');
+        var mm = String(now.getMonth() + 1).padStart(2, '0');
+        var yyyy = now.getFullYear();
+        var wFull = days[now.getDay()];
+        var mFull = months[now.getMonth()];
+
+        if (dateFormat === "mdy_text") {
+            currentDate = wFull + ", " + mFull + " " + d;
+        } else if (dateFormat === "dmy_num") {
+            currentDate = wFull + ", " + dd + "/" + mm + "/" + yyyy;
+        } else if (dateFormat === "mdy_num") {
+            currentDate = wFull + ", " + mm + "/" + dd + "/" + yyyy;
+        } else if (dateFormat === "iso") {
+            currentDate = wFull + ", " + yyyy + "-" + mm + "-" + dd;
         } else {
-            var daysEs = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
-            var monthsEs = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-            currentDate = daysEs[now.getDay()] + ", " + now.getDate() + " de " + monthsEs[now.getMonth()];
+            currentDate = (uiLanguage === "en")
+                ? (wFull + ", " + d + " " + mFull)
+                : (wFull + ", " + d + " de " + mFull);
         }
     }
 
@@ -175,6 +195,8 @@ QtObject {
                     if (d.media_artist !== undefined) root.mediaArtist = d.media_artist;
                     if (d.media_playing !== undefined) root.mediaPlaying = d.media_playing;
                     if (d.language !== undefined && d.language !== "") root.uiLanguage = d.language;
+                    if (d.date_format !== undefined && d.date_format !== "") root.dateFormat = d.date_format;
+                    if (d.temp_unit !== undefined && d.temp_unit !== "") root.tempUnit = d.temp_unit;
 
                     if (d.theme_bg !== undefined) root.themeBg = d.theme_bg;
                     if (d.theme_card !== undefined) root.themeCard = d.theme_card;

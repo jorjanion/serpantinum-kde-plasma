@@ -16,6 +16,8 @@ PlasmoidItem {
 
         // State properties
         property string uiLanguage: "es"
+        property string dateFormat: "dmy_text"
+        property string tempUnit: "C"
         property string currentTime: "22:00:00"
         property string currentDate: "jueves, 15 de octubre"
         property string currentDateShort: "jue, 15 de oct"
@@ -181,6 +183,7 @@ PlasmoidItem {
         }
 
         onUiLanguageChanged: updateDateTime()
+        onDateFormatChanged: updateDateTime()
 
         function updateDateTime() {
             var now = new Date();
@@ -189,22 +192,49 @@ PlasmoidItem {
             var s = String(now.getSeconds()).padStart(2, '0');
             currentTime = h + ":" + m + ":" + s;
 
-            if (uiLanguage === "en") {
-                var daysEn = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-                var daysShortEn = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-                var monthsEn = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                var monthsShortEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var dayNames = (uiLanguage === "en")
+                ? ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+                : ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+            var dayShortNames = (uiLanguage === "en")
+                ? ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+                : ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
+            var monthNames = (uiLanguage === "en")
+                ? ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+                : ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+            var monthShortNames = (uiLanguage === "en")
+                ? ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                : ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
-                currentDate = daysEn[now.getDay()] + ", " + monthsEn[now.getMonth()] + " " + now.getDate();
-                currentDateShort = daysShortEn[now.getDay()] + ", " + monthsShortEn[now.getMonth()] + " " + now.getDate();
+            var d = now.getDate();
+            var dd = String(d).padStart(2, '0');
+            var mm = String(now.getMonth() + 1).padStart(2, '0');
+            var yyyy = now.getFullYear();
+            var wFull = dayNames[now.getDay()];
+            var wShort = dayShortNames[now.getDay()];
+            var mFull = monthNames[now.getMonth()];
+            var mShort = monthShortNames[now.getMonth()];
+
+            if (dateFormat === "mdy_text") {
+                currentDate = wFull + ", " + mFull + " " + d;
+                currentDateShort = wShort + ", " + mShort + " " + d;
+            } else if (dateFormat === "dmy_num") {
+                currentDate = wFull + ", " + dd + "/" + mm + "/" + yyyy;
+                currentDateShort = dd + "/" + mm + "/" + yyyy;
+            } else if (dateFormat === "mdy_num") {
+                currentDate = wFull + ", " + mm + "/" + dd + "/" + yyyy;
+                currentDateShort = mm + "/" + dd + "/" + yyyy;
+            } else if (dateFormat === "iso") {
+                currentDate = wFull + ", " + yyyy + "-" + mm + "-" + dd;
+                currentDateShort = yyyy + "-" + mm + "-" + dd;
             } else {
-                var daysEs = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
-                var daysShortEs = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
-                var monthsEs = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-                var monthsShortEs = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-
-                currentDate = daysEs[now.getDay()] + ", " + now.getDate() + " de " + monthsEs[now.getMonth()];
-                currentDateShort = daysShortEs[now.getDay()] + ", " + now.getDate() + " de " + monthsShortEs[now.getMonth()];
+                // dmy_text (European textual)
+                if (uiLanguage === "en") {
+                    currentDate = wFull + ", " + d + " " + mFull;
+                    currentDateShort = wShort + ", " + d + " " + mShort;
+                } else {
+                    currentDate = wFull + ", " + d + " de " + mFull;
+                    currentDateShort = wShort + ", " + d + " de " + mShort;
+                }
             }
 
             barContainer.todayDay = now.getDate();
@@ -288,6 +318,8 @@ PlasmoidItem {
                         if (data.default_sink !== undefined) barContainer.defaultSink = data.default_sink;
                         if (data.lang !== undefined) barContainer.lang = data.lang;
                         if (data.language !== undefined && data.language !== "") barContainer.uiLanguage = data.language;
+                        if (data.date_format !== undefined && data.date_format !== "") barContainer.dateFormat = data.date_format;
+                        if (data.temp_unit !== undefined && data.temp_unit !== "") barContainer.tempUnit = data.temp_unit;
                         if (data.power_profile !== undefined) barContainer.powerProfile = data.power_profile;
                         if (data.bar_distinct_pills !== undefined) barContainer.barDistinctPills = data.bar_distinct_pills;
                         if (data.bar_mod_settings !== undefined) barContainer.modSettings = data.bar_mod_settings;
